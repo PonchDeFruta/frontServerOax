@@ -1,0 +1,112 @@
+﻿<div [ngClass]="{ 'dark text-white-dark': store.semidark }">
+    <nav
+        class="sidebar fixed bottom-0 top-0 z-50 h-full min-h-screen w-[260px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] transition-all duration-300">
+        <div class="h-full bg-white dark:bg-[#0e1726]">
+            <div class="flex items-center justify-between px-4 py-3">
+                <a routerLink="/" class="main-logo flex shrink-0 items-center">
+                    <img class="ml-[5px] w-14 flex-none" src="/assets/images/logo.svg" alt="" />
+                    <span
+                        class="align-middle text-2xl font-semibold text-primary ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light lg:inline">CUIXTLA</span>
+                </a>
+                <a href="javascript:;"
+                    class="collapse-icon flex h-8 w-8 items-center rounded-full transition duration-300 hover:bg-gray-500/10 hover:text-primary rtl:rotate-180 dark:text-white-light dark:hover:bg-dark-light/10"
+                    (click)="storeData.dispatch({ type: 'toggleSidebar'})">
+                    <icon-carets-down class="m-auto rotate-90" />
+                </a>
+            </div>
+            <ng-scrollbar class="relative !h-[calc(100vh-80px)]" appearance="compact">
+                <ul class="relative space-y-0.5 p-4 py-0 font-semibold">
+                    <h2
+                        class="-mx-4 mb-1 flex items-center bg-white-light/30 px-7 py-3 font-semibold uppercase dark:bg-dark dark:bg-opacity-[0.08]">
+                        <icon-minus class="hidden h-5 w-4 flex-none" />
+                        <span>{{ 'CREAR NUEVO' }}</span>
+                    </h2>
+
+                    <li class="nav-item">
+                        <ul>
+                            <li class="nav-item">
+                                <a routerLink="/forms/basic" class="group" routerLinkActive="active"
+                                    (click)="toggleMobileMenu()">
+                                    <div class="flex items-center">
+                                        <icon-menu-chat class="shrink-0 group-hover:!text-primary" />
+                                        <span
+                                            class="text-black font-medium ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{{
+                                            'Anuncio' }}</span>
+                                    </div>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a routerLink="/forms/residente" class="group" routerLinkActive="active"
+                                    (click)="toggleMobileMenu()">
+                                    <div class="flex items-center">
+                                        <icon-menu-users class="shrink-0 group-hover:!text-primary" />
+                                        <span
+                                            class="text-black font-medium ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{{
+                                            'Residente' }}</span>
+                                    </div>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a routerLink="/forms/domicilio" class="group" routerLinkActive="active"
+                                    (click)="toggleMobileMenu()">
+                                    <div class="flex items-center">
+                                        <icon-menu-drag-and-drop class="shrink-0 group-hover:!text-primary" />
+
+                                        <span
+                                            class="text-black font-medium ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{{
+                                            'Domicilio' }}</span>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <h2
+                        class="-mx-4 mb-1 flex items-center bg-white-light/30 px-7 py-3 font-semibold uppercase dark:bg-dark dark:bg-opacity-[0.08]">
+                        <icon-minus class="hidden h-5 w-4 flex-none" />
+                        <span>{{ 'CONSULTAR Y EDITAR' }}</span>
+                    </h2>
+
+                    <ul>
+                        <li class="nav-item">
+                            <a routerLink="components/cards" class="group" routerLinkActive="active"
+                                (click)="toggleMobileMenu()">
+                                <div class="flex items-center">
+                                    <icon-menu-chat class="shrink-0 group-hover:!text-primary" />
+
+                                    <span
+                                        class="text-black font-medium ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{{
+                                        'Anuncio' }}</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a routerLink="datatables/residentes" class=" group" routerLinkActive="active"
+                                (click)="toggleMobileMenu()">
+                                <div class="flex items-center">
+                                    <icon-menu-users class="shrink-0 group-hover:!text-primary" />
+
+                                    <span
+                                        class="text-black font-medium ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{{
+                                        'Residente' }}</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a routerLink="/forms/domicilio" class="group" routerLinkActive="active"
+                                (click)="toggleMobileMenu()">
+                                <div class="flex items-center">
+                                    <icon-menu-drag-and-drop class="shrink-0 group-hover:!text-primary" />
+
+                                    <span
+                                        class="text-black font-medium ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{{
+                                        'Mapa de Cuixtla' }}</span>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </ul>
+            </ng-scrollbar>
+        </div>
+    </nav>
+</div>
