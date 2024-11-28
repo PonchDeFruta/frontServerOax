@@ -6,8 +6,6 @@ import { TablesComponent } from './tables';
 // font-icons
 import { FontIconsComponent } from './font-icons';
 
-// charts
-import { ChartsComponent } from './charts';
 import { AppLayout } from './layouts/app-layout';
 
 export const routes: Routes = [
@@ -18,9 +16,6 @@ export const routes: Routes = [
             // dashboard
             // font-icons
             { path: 'font-icons', component: FontIconsComponent, data: { title: 'Font Icons' } },
-
-            // charts
-            { path: 'charts', component: ChartsComponent, data: { title: 'Charts' } },
 
             // components
             { path: '', loadChildren: () => import('./components/components.module').then((d) => d.ComponentsModule) },

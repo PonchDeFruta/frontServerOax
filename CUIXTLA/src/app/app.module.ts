@@ -28,12 +28,6 @@ export function HttpLoaderFactory(httpHandler: HttpBackend): TranslateHttpLoader
 
 // dashboard
 import { IndexComponent } from './index';
-import { AnalyticsComponent } from './analytics';
-import { FinanceComponent } from './finance';
-import { CryptoComponent } from './crypto';
-
-// widgets
-import { WidgetsComponent } from './widgets';
 
 // tables
 import { TablesComponent } from './tables';
@@ -41,19 +35,8 @@ import { TablesComponent } from './tables';
 // font-icons
 import { FontIconsComponent } from './font-icons';
 
-// charts
-import { ChartsComponent } from './charts';
-
-// dragndrop
-import { DragndropComponent } from './dragndrop';
-
-// pages
-import { KnowledgeBaseComponent } from './pages/knowledge-base';
-import { FaqComponent } from './pages/faq';
-
 // Layouts
 import { AppLayout } from './layouts/app-layout';
-import { AuthLayout } from './layouts/auth-layout';
 
 import { HeaderComponent } from './layouts/header';
 import { FooterComponent } from './layouts/footer';
@@ -88,17 +71,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
         ThemeCustomizerComponent,
         TablesComponent,
         FontIconsComponent,
-        ChartsComponent,
         IndexComponent,
-        AnalyticsComponent,
-        FinanceComponent,
-        CryptoComponent,
-        WidgetsComponent,
-        DragndropComponent,
         AppLayout,
-        AuthLayout,
-        KnowledgeBaseComponent,
-        FaqComponent,
     ],
 
     providers: [Title],
