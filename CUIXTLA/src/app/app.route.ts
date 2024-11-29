@@ -23,6 +23,10 @@ export const routes: Routes = [
             // forms
             { path: '', loadChildren: () => import('./forms/form.module').then((d) => d.FormModule) },
 
+            //map
+            // forms
+            { path: '', loadChildren: () => import('./map/map.module').then((d) => d.MapModule) },
+
             // tables
             { path: 'tables', component: TablesComponent, data: { title: 'Tables' } },
             { path: '', loadChildren: () => import('./datatables/datatables.module').then((d) => d.DatatablesModule) },

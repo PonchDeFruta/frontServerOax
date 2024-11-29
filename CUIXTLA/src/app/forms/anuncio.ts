@@ -4,10 +4,10 @@ import { FlatpickrDefaultsInterface } from 'angularx-flatpickr';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
-    selector: 'app-basic',
-    templateUrl: './basic.html',
+    selector: 'app-anuncio',
+    templateUrl: './anuncio.html',
 })
-export class BasicComponent {
+export class AnuncioComponent {
     codeArr: any = [];
     toggleCode = (name: string) => {
         if (this.codeArr.includes(name)) {

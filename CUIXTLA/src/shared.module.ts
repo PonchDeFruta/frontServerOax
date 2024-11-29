@@ -7,9 +7,6 @@ import { Title } from '@angular/platform-browser';
 // service
 import { AppService } from 'src/app/service/app.service';
 
-// i18n
-import { TranslateModule } from '@ngx-translate/core';
-
 // perfect-scrollbar
 import { NgScrollbarModule, provideScrollbarOptions } from 'ngx-scrollbar';
 
@@ -71,7 +68,6 @@ import { ClipboardModule } from 'ngx-clipboard';
         ReactiveFormsModule,
         RouterModule,
 
-        TranslateModule.forChild(),
         NgScrollbarModule,
         DataTableModule,
         MenuModule,
@@ -96,8 +92,6 @@ import { ClipboardModule } from 'ngx-clipboard';
         // modules
         FormsModule,
         ReactiveFormsModule,
-
-        TranslateModule,
         NgScrollbarModule,
         DataTableModule,
         MenuModule,

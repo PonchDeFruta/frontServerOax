@@ -1,4 +1,13 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { ResidenteService } from '../service/residente.service';
+
+interface Residente {
+    nombre: string;
+    apellido: string;
+    apodo: string;
+    comercio: string;
+    domicilio: { direccion: string; referencia: string; coordenadas: string } | null;
+}
 
 @Component({
     selector: 'app-residentes',
@@ -16,15 +25,24 @@ export class ResidentesComponent implements OnInit {
         { field: 'comercio', title: 'Comercio' },
         { field: 'accion', title: 'Editar' },
     ];
-    rows = [
-        { id: 1, nombre: 'Juan', apellido: 'Pérez', apodo: 'JP', comercio: 'Comercio 1' },
-        { id: 2, nombre: 'María', apellido: 'González', apodo: 'MG', comercio: 'Comercio 2' },
-        { id: 3, nombre: 'Carlos', apellido: 'Rodríguez', apodo: 'CR', comercio: 'Comercio 3' },
-        { id: 4, nombre: 'Ana', apellido: 'López', apodo: 'AL', comercio: 'Comercio 4' },
-        { id: 5, nombre: 'Luis', apellido: 'Martínez', apodo: 'LM', comercio: 'Comercio 5' },
-    ];
 
-    constructor() {}
+    rows: any[] = [];
+    constructor(private residentesService: ResidenteService) {}
 
-    ngOnInit(): void {}
+    // Método para obtener la lista de residentes
+    getResidentes(): void {
+        this.residentesService.getResidentes().subscribe(
+            (data) => {
+                this.residentes = data; // Asignar la lista de residentes
+                console.log(this.residentes);
+                this.rows = this.residentes;
+            },
+            (error) => {
+                console.error('Error al obtener residentes', error);
+            },
+        );
+    }
+    ngOnInit(): void {
+        this.getResidentes();
+    }
 }
