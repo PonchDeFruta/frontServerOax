@@ -8,6 +8,7 @@ const routes: Routes = [{ path: 'map', component: MapComponent, data: { title: '
 
 @NgModule({
     imports: [RouterModule.forChild(routes), CommonModule, SharedModule.forRoot()],
-    declarations: [],
+    declarations: [MapComponent],
+    exports: [MapComponent]
 })
 export class MapModule {}

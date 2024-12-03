@@ -1,1 +1,26 @@
-<p>map works!</p>
+<div class="map-container">
+    <!-- Imagen del mapa -->
+    <img
+      src="assets/map-placeholder.png"
+      alt="Mapa"
+      class="map-image"
+    />
+  
+    <!-- Iterar sobre los residentes para colocar los pines -->
+    <div
+      *ngFor="let residente of residentes"
+      class="pin"
+      [ngStyle]="getPinStyle(residente.domicilio.coordenadas)"
+    >
+      📍
+      <!-- Tooltip nativo -->
+      <div class="tooltip">
+        <strong>Nombre:</strong> {{ residente.nombre }} {{ residente.apellido }}<br>
+        <strong>Apodo:</strong> {{ residente.apodo }}<br>
+        <strong>Comercio:</strong> {{ residente.comercio }}<br>
+        <strong>Dirección:</strong> {{ residente.domicilio.direccion }}<br>
+        <strong>Referencia:</strong> {{ residente.domicilio.referencia }}
+      </div>
+    </div>
+  </div>
+  

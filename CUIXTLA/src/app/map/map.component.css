@@ -1,0 +1,40 @@
+.map-container {
+    position: relative;
+    width: 352px; /* Tamaño exacto de la imagen */
+    height: 443px; /* Tamaño exacto de la imagen */
+    margin: 0 auto; /* Centrar el mapa horizontalmente */
+  }
+  
+  .map-image {
+    width: 100%; /* Asegurarnos de que ocupe todo el contenedor */
+    height: 100%;
+    display: block;
+  }
+  
+  .pin {
+    position: absolute;
+    font-size: 24px;
+    color: red;
+    cursor: pointer;
+    transform: translate(-50%, -100%); /* Ajuste para que la punta del pin esté en la coordenada */
+  }
+  
+  .tooltip {
+    display: none;
+    position: absolute;
+    bottom: 120%; /* Mover el tooltip arriba del pin */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 10;
+  }
+  
+  .pin:hover .tooltip {
+    display: block;
+  }
+  

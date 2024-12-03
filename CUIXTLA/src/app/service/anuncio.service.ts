@@ -20,7 +20,4 @@ export class AnuncioService {
     return this.http.post(`${this.baseUrl}/anuncios/crearAnuncio`, payload);
   }
   
-  uploadAudio(formData: FormData): Observable<any> {
-    return this.http.post('http://localhost:8080/uploadAudio', formData);
-  }
 }
