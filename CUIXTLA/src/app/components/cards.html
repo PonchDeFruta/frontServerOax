@@ -135,91 +135,56 @@
             </tbody>
         </table>
 
-        <!-- Filtros -->
-        <div class="mb-5 flex items-center justify-between">
-            <ng-select [(ngModel)]="selectedYear" [items]="years" bindLabel="year" bindValue="year"
-                placeholder="Seleccione un año" class="w-1/4">
-            </ng-select>
-            <ng-select [(ngModel)]="selectedMonth" [items]="months" bindLabel="month" bindValue="month"
-                placeholder="Seleccione un mes" class="w-1/4">
-            </ng-select>
-            <ng-select [(ngModel)]="selectedDay" [items]="days" bindLabel="day" bindValue="day"
-                placeholder="Seleccione un día" class="w-1/4">
-            </ng-select>
-            <div class="ltr:ml-auto rtl:mr-auto w-1/4">
-                <input [(ngModel)]="search2" type="text" class="form-input" placeholder="Buscar Anuncio ..." />
-            </div>
-        </div>
+            <!-- Filtros -->
+<!-- Filtros -->
+<div class="mb-5 flex items-center justify-between">
+  <ng-select
+    [(ngModel)]="selectedYear"
+    [items]="years"
+    (change)="filterAnuncios()"
+    placeholder="Seleccione un año"
+    class="w-1/4"
+  ></ng-select>
+  <ng-select
+    [(ngModel)]="selectedMonth"
+    [items]="months"
+    (change)="generateDaysOptions(); filterAnuncios()"
+    placeholder="Seleccione un mes"
+    class="w-1/4"
+  ></ng-select>
+  <ng-select
+    [(ngModel)]="selectedDay"
+    [items]="days"
+    (change)="filterAnuncios()"
+    placeholder="Seleccione un día"
+    class="w-1/4"
+  ></ng-select>
+  <div class="ltr:ml-auto rtl:mr-auto w-1/4">
+    <input
+      [(ngModel)]="search2"
+      (input)="filterAnuncios()"
+      type="text"
+      class="form-input"
+      placeholder="Buscar Anuncio..."
+    />
+  </div>
+</div>
 
-        <div class="w-full flex flex-row gap-8">
-            <div class="w-full">
-                <div class="panel" *ngFor="let anuncio of anuncios">
-                    <div class="mb-5 flex items-center justify-center">
-                        <div
-                            class="p-5 w-full max-w-[30rem] rounded border border-[#e0e6ed] bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
-                            <div class="flex flex-col">
-                                <div class="flex flex-row justify-between">
-                                    <p class="font-bold text-lg text-rose-500">
-                                        {{ anuncio.titulo }} - {{ anuncio.comercio }}
-                                    </p>
-                                    <button type="button" class="btn bg-rose-500 text-white"
-                                        (click)="modal20.open()">Editar</button>
-                                </div>
-                                <!-- Modal -->
-                                <ngx-custom-modal #modal20 customClass="modal-top auth-modal">
-                                    <ng-template #modalHeader>
-                                        <div class="!py-5">Editar</div>
-                                    </ng-template>
+<!-- Mostrar lista de anuncios filtrados -->
+<div *ngFor="let anuncio of filteredAnuncios" class="panel">
+  <div class="p-5 w-full max-w-[30rem] rounded border border-[#e0e6ed] bg-white">
+    <div class="flex flex-col">
+      <div class="flex flex-row justify-between">
+        <p class="font-bold text-lg text-primary">
+          {{ anuncio.titulo }} - {{ anuncio.comercio }}
+        </p>
+      </div>
+      <p class="text-white-dark">{{ anuncio.fechaHora }}</p>
+      <p class="font-semibold text-white-dark">{{ anuncio.descripcion }}</p>
+    </div>
+  </div>
+</div>
 
-                                    <ng-template #modalBody>
-                                        <label for="ctnTitle">Título:</label>
-                                        <input id="ctnTitle" type="text" placeholder="Título del anuncio"
-                                            class="form-input" required />
-
-                                        <label for="ctnDescription">Descripción:</label>
-                                        <textarea id="ctnDescription" rows="3" class="form-textarea" placeholder=" "
-                                            required></textarea>
-
-                                        <label>Residente:</label>
-                                        <div class="mb-5">
-                                            <div class="mb-5">
-                                                <ng-select [(ngModel)]="input" [items]="residentes" bindLabel="name"
-                                                    bindValue="id" [appendTo]="'body'"
-                                                    placeholder="Seleccione un residente">
-                                                </ng-select>
-                                            </div>
-                                        </div>
-                                    </ng-template>
-
-                                    <ng-template #modalFooter>
-                                        <div class="flex justify-around">
-                                            <div>
-                                                <button type="button" class="btn btn-success"
-                                                    (click)="modal20.close()">Guardar</button>
-                                            </div>
-                                            <div>
-                                                <button type="button" class="btn btn-danger"
-                                                    (click)="modal20.close()">Cancelar</button>
-                                            </div>
-                                        </div>
-                                    </ng-template>
-                                </ngx-custom-modal>
-
-                                <div class="flex flex-col space-y-5">
-                                    <h5 class="text-[15px] font-semibold text-[#3b3f5c] dark:text-white-light">
-                                        {{ anuncio.residente }}
-                                    </h5>
-
-                                    <p class="text-white-dark">{{ anuncio.fechaHora }}</p>
-
-                                    <p class="font-semibold text-white-dark">{{ anuncio.descripcion }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
     </div>
   </div>
