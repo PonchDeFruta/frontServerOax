@@ -1,102 +1,93 @@
-<div class="panel lg:row-span-3">
-    <div class="mb-5 flex items-center justify-between">
-        <h5 class="text-lg font-semibold dark:text-white-light">Crear un nuevo anuncio</h5>
+<div class="form-container mx-auto p-6 max-w-lg bg-white rounded shadow-md">
+    <h2 class="text-xl font-bold mb-4 text-center">Crear un Nuevo Anuncio</h2>
+  
+    <!-- Mensaje de error o éxito -->
+    <div
+      *ngIf="message"
+      [ngClass]="{ 'bg-green-100 text-green-800': messageType === 'success', 'bg-red-100 text-red-800': messageType === 'error' }"
+      class="p-4 mb-4 text-center rounded"
+    >
+      {{ message }}
     </div>
-    <div class="mb-5">
-        <form class="space-y-5" ngNativeValidate>
-            <div>
-                <label for="ctnTitle">Título:</label>
-                <input id="ctnTitle" type="text" placeholder=" Título del anuncio" class="form-input" required />
-            </div>
-
-            <div>
-                <label for="ctnDescription">Anuncio:</label>
-                <textarea id="ctnDescription" rows="3" class="form-textarea"
-                    placeholder=" Escriba aquí el contenido del anuncio o alguna descripción." required></textarea>
-            </div>
-            <label>Fecha y hora :</label>
-
-            <div class="mb-5">
-                <form [formGroup]="form2">
-                    <input type="text" mwlFlatpickr formControlName="date2" [options]="dateTime" class="form-input" />
-                </form>
-            </div>
-
-            <ng-container *ngIf="codeArr.includes('code2')">
-                <pre> <code [languages]="['xml','typescript']" highlightAuto="&lt;!-- date & time --&gt;
-                &lt;form [formGroup]=&quot;form2&quot;&gt;
-                    &lt;ng2-flatpickr [config]=&quot;dateTime&quot; formControlName=&quot;date2&quot; addClass=&quot;form-input&quot;&gt;&lt;/ng2-flatpickr&gt;
-                &lt;/form&gt;
-                
-                &lt;!-- script --&gt;
-                dateTime: FlatpickrOptions;
-                
-                form2!: FormGroup;
-                
-                constructor(public storeData: Store&lt;any&gt;, public fb: FormBuilder) {
-                    this.form2 = this.fb.group({
-                        date2: ['2024-11-17 12:00'],
-                    });
-                
-                    this.dateTime = {
-                        defaultDate: '2024-11-17  12:00',
-                        enableTime: true,
-                        dateFormat: 'Y-m-d H:i',
-                        position: this.store.rtlClass === 'rtl' ? 'auto right' : 'auto left',
-                    };
-                }"></code> </pre>
-            </ng-container>
-
-            <label>Residente:</label>
-            <div class="mb-5">
-                <ng-select [items]="options2" [(ngModel)]="input2" [clearable]="false"
-                    placeholder="Residente en la base" class="custom-multiselect">
-                </ng-select>
-            </div>
-
-            <div>
-                <label for="ctnFile"> Añadir audio </label>
-                <input id="ctnFile" type="file"
-                    class="rtl:file-ml-5 form-input p-0 file:border-0 file:bg-primary/90 file:px-4 file:py-2 file:font-semibold file:text-white file:hover:bg-primary ltr:file:mr-5"
-                    required />
-            </div>
-            <button type="submit" class="btn btn-primary !mt-6">Crear Anuncio</button>
-        </form>
+  
+    <!-- Título -->
+    <div class="mb-4">
+      <label for="titulo" class="block text-sm font-medium text-gray-700">Título</label>
+      <input
+        id="titulo"
+        type="text"
+        [(ngModel)]="anuncio.titulo"
+        placeholder="Título del anuncio"
+        class="form-input mt-1 block w-full rounded border-gray-300 shadow-sm"
+      />
     </div>
-    <ng-container *ngIf="codeArr.includes('code9')">
-        <pre> <code [languages]="['xml','typescript']" highlightAuto="&lt;!-- form controls --&gt;
-&lt;form class=&quot;space-y-5&quot; ngNativeValidate&gt;
-    &lt;div&gt;
-        &lt;label for=&quot;ctnEmail&quot;&gt;Email address&lt;/label&gt;
-        &lt;input id=&quot;ctnEmail&quot; type=&quot;email&quot; placeholder=&quot;name@example.com&quot; class=&quot;form-input&quot; required /&gt;
-    &lt;/div&gt;
-    &lt;div&gt;
-        &lt;label for=&quot;ctnSelect1&quot;&gt;Example select&lt;/label&gt;
-        &lt;select id=&quot;ctnSelect1&quot; class=&quot;form-select text-white-dark&quot; required&gt;
-            &lt;option&gt;Open this select menu&lt;/option&gt;
-            &lt;option&gt;One&lt;/option&gt;
-            &lt;option&gt;Two&lt;/option&gt;
-            &lt;option&gt;Three&lt;/option&gt;
-        &lt;/select&gt;
-    &lt;/div&gt;
-    &lt;div&gt;
-        &lt;label for=&quot;ctnSelect2&quot;&gt;Example multiple select&lt;/label&gt;
-        &lt;select id=&quot;ctnSelect2&quot; multiple=&quot;multiple&quot; class=&quot;form-multiselect text-white-dark&quot; required&gt;
-            &lt;option&gt;Open this select menu&lt;/option&gt;
-            &lt;option&gt;One&lt;/option&gt;
-            &lt;option&gt;Two&lt;/option&gt;
-            &lt;option&gt;Three&lt;/option&gt;
-        &lt;/select&gt;
-    &lt;/div&gt;
-    &lt;div&gt;
-        &lt;label for=&quot;ctnTextarea&quot;&gt;Example textarea&lt;/label&gt;
-        &lt;textarea id=&quot;ctnTextarea&quot; rows=&quot;3&quot; class=&quot;form-textarea&quot; placeholder=&quot;Enter Textarea&quot; required&gt;&lt;/textarea&gt;
-    &lt;/div&gt;
-    &lt;div&gt;
-        &lt;label for=&quot;ctnFile&quot;&gt;Example file input&lt;/label&gt;
-        &lt;input id=&quot;ctnFile&quot; type=&quot;file&quot; class=&quot;form-input file:py-2 file:px-4 file:border-0 file:font-semibold p-0 file:bg-primary/90 ltr:file:mr-5 rtl:file:ml-5 file:text-white file:hover:bg-primary&quot; required /&gt;
-    &lt;/div&gt;
-    &lt;button type=&quot;submit&quot; class=&quot;btn btn-primary !mt-6&quot;&gt;Submit&lt;/button&gt;
-&lt;/form&gt;"></code> </pre>
-    </ng-container>
-</div>
+  
+    <!-- Contenido del Mensaje -->
+    <div class="mb-4">
+      <label for="contenido" class="block text-sm font-medium text-gray-700">Contenido del Mensaje</label>
+      <input
+        id="contenido"
+        type="text"
+        [(ngModel)]="anuncio.contenidoDelMensaje"
+        [disabled]="anuncio.esAudio"
+        placeholder="Escriba aquí el contenido del mensaje"
+        class="form-input mt-1 block w-full rounded border-gray-300 shadow-sm"
+      />
+    </div>
+  
+    <!-- Cargar Archivo -->
+    <div *ngIf="anuncio.esAudio" class="mb-4">
+      <label for="archivo" class="block text-sm font-medium text-gray-700">Cargar Archivo de Audio</label>
+      <input
+        id="archivo"
+        type="file"
+        (change)="onFileSelected($event)"
+        accept=".mp3,.wav,.m4a"
+        class="form-input mt-1 block w-full rounded border-gray-300 shadow-sm"
+      />
+    </div>
+  
+    <!-- Fecha y Hora -->
+    <div class="mb-4">
+      <label for="fecha" class="block text-sm font-medium text-gray-700">Fecha y Hora</label>
+      <input
+        id="fecha"
+        type="text"
+        mwlFlatpickr
+        [(ngModel)]="anuncio.fechaMensaje"
+        [options]="dateTime"
+        class="form-input mt-1 block w-full rounded border-gray-300 shadow-sm"
+      />
+    </div>
+  
+    <!-- Residente Dropdown -->
+    <div class="mb-4">
+      <label for="residente" class="block text-sm font-medium text-gray-700">Residente</label>
+      <select
+        id="residente"
+        [(ngModel)]="anuncio.idResidente"
+        class="form-select mt-1 block w-full rounded border-gray-300 shadow-sm"
+      >
+        <option [value]="null">Selecciona un residente</option>
+        <option *ngFor="let residente of residentes" [value]="residente.idResidente">
+          {{ residente.nombre }} {{ residente.apellido }}
+        </option>
+      </select>
+    </div>
+  
+    <!-- Checkbox para Audio -->
+    <div class="mb-4">
+      <input id="esAudio" type="checkbox" [(ngModel)]="anuncio.esAudio" class="mr-2" />
+      <label for="esAudio" class="text-sm font-medium text-gray-700">¿Crear con audio?</label>
+    </div>
+  
+    <!-- Botón Crear -->
+    <button
+      class="btn btn-primary w-full mt-4 hover:bg-blue-600 text-white px-4 py-2 rounded"
+      [disabled]="!canSubmit()"
+      (click)="crearAnuncio()"
+    >
+      Crear Anuncio
+    </button>
+  </div>
+  

@@ -1,52 +1,113 @@
-import { Component } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { FlatpickrDefaultsInterface } from 'angularx-flatpickr';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { AnuncioService } from '../service/anuncio.service'; // Ruta ajustada según tu proyecto
 
 @Component({
-    selector: 'app-anuncio',
-    templateUrl: './anuncio.html',
+  selector: 'app-anuncio',
+  templateUrl: './anuncio.html',
 })
-export class AnuncioComponent {
-    codeArr: any = [];
-    toggleCode = (name: string) => {
-        if (this.codeArr.includes(name)) {
-            this.codeArr = this.codeArr.filter((d: string) => d != name);
-        } else {
-            this.codeArr.push(name);
-        }
+export class AnuncioComponent implements OnInit {
+  anuncio = {
+    titulo: '',
+    contenidoDelMensaje: '',
+    fechaMensaje: '',
+    esAudio: false,
+    idResidente: null,
+  };
+
+  residentes: any[] = []; // Lista de residentes
+  message: string | null = null;
+  messageType: 'success' | 'error' | null = null;
+
+  dateTime = {
+    enableTime: true,
+    dateFormat: 'Y-m-d H:i',
+    defaultDate: new Date().toISOString().slice(0, 16),
+  };
+
+  constructor(private anuncioService: AnuncioService) {}
+
+  ngOnInit() {
+    this.loadResidentes();
+  }
+
+  // Cargar residentes usando el servicio
+  loadResidentes() {
+    this.anuncioService.getResidentes().subscribe(
+      (data) => {
+        this.residentes = data.filter((residente) => residente.nombre && residente.apellido);
+      },
+      (error) => {
+        console.error('Error al cargar residentes:', error);
+        this.showMessage('Error al cargar residentes.', 'error');
+      }
+    );
+  }
+
+  // Manejar selección de archivo
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      this.anuncio.contenidoDelMensaje = file.name; // Solo el nombre del archivo
+      this.showMessage(`Archivo "${file.name}" seleccionado.`, 'success');
+    }
+  }
+
+  // Validar si el formulario puede enviarse
+  canSubmit() {
+    return (
+      this.anuncio.titulo &&
+      this.anuncio.fechaMensaje &&
+      (!this.anuncio.esAudio || this.anuncio.contenidoDelMensaje)
+    );
+  }
+
+  // Crear un nuevo anuncio usando el servicio
+  crearAnuncio() {
+    const fechaISO = new Date(this.anuncio.fechaMensaje).toISOString();
+
+    const payload = {
+      titulo: this.anuncio.titulo,
+      contenidoDelMensaje: this.anuncio.contenidoDelMensaje,
+      fechaMensaje: fechaISO.substring(0, 19),
+      esAudio: this.anuncio.esAudio,
+      idResidente: this.anuncio.idResidente,
     };
 
-    input5: string | undefined;
+    console.log('Payload enviado:', payload);
 
-    options2 = [
-        { name: 'Orange', group_name: 'Group 1' },
-        { name: 'White', group_name: 'Group 1' },
-        { name: 'Purple', group_name: 'Group 1' },
-        { name: 'Yellow', group_name: 'Group 2' },
-        { name: 'Red', group_name: 'Group 2' },
-        { name: 'Green', group_name: 'Group 2' },
-        { name: 'Aqua', group_name: 'Group 3' },
-        { name: 'Black', group_name: 'Group 3' },
-        { name: 'Blue', group_name: 'Group 3' },
-    ];
-    input2 = 'Orange';
+    this.anuncioService.crearAnuncio(payload).subscribe(
+      (response) => {
+        console.log('Anuncio creado:', response);
+        this.showMessage('Anuncio creado con éxito.', 'success');
+        this.resetFormulario();
+      },
+      (error) => {
+        console.error('Error al crear anuncio:', error);
+        this.showMessage('Ocurrió un error al crear el anuncio.', 'error');
+      }
+    );
+  }
 
-    dateTime: FlatpickrDefaultsInterface;
-    form2!: FormGroup;
+  // Mostrar mensajes de éxito o error
+  private showMessage(message: string, type: 'success' | 'error' | null) {
+    this.message = message;
+    this.messageType = type;
 
-    constructor(
-        public storeData: Store<any>,
-        public fb: FormBuilder,
-    ) {
-        this.form2 = this.fb.group({
-            date2: ['2022-07-05 12:00'],
-        });
+    setTimeout(() => {
+      this.message = null;
+      this.messageType = null;
+    }, 5000);
+  }
 
-        this.dateTime = {
-            enableTime: true,
-            dateFormat: 'Y-m-d H:i',
-            monthSelectorType: 'dropdown',
-        };
-    }
+  // Reiniciar formulario
+  resetFormulario() {
+    this.anuncio = {
+      titulo: '',
+      contenidoDelMensaje: '',
+      fechaMensaje: '',
+      esAudio: false,
+      idResidente: null,
+    };
+  }
 }

@@ -1,15 +1,56 @@
 <div class="panel mt-6 pb-0">
-    <div class="panel mt-6 pb-0">
-        <div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
-            <h5 class="text-lg font-semibold dark:text-white-light">Residentes registrados en el sistema</h5>
-            <div class="ltr:ml-auto rtl:mr-auto">
-                <input [(ngModel)]="search" type="text" class="form-input" placeholder="Buscar..." />
-            </div>
-        </div>
-
-        <div class="datatable custom-striped">
-            <ng-datatable [rows]="rows" [columns]="cols" [search]="search" skin="custom-striped custom-hover">
-            </ng-datatable>
-        </div>
+    <!-- Barra de búsqueda -->
+    <div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
+      <h5 class="text-lg font-semibold dark:text-white-light">Residentes registrados en el sistema</h5>
+      <div class="ltr:ml-auto rtl:mr-auto">
+        <input
+          [(ngModel)]="search"
+          type="text"
+          class="form-input"
+          placeholder="Buscar..."
+          (ngModelChange)="applyFilter()"
+        />
+      </div>
     </div>
-</div>
+  
+    <!-- Tabla de residentes -->
+    <div class="datatable custom-striped">
+      <ng-datatable
+        [rows]="filteredRows"
+        [columns]="cols"
+        [search]="search"
+        skin="custom-striped custom-hover"
+      ></ng-datatable>
+    </div>
+  
+    <!-- Acciones por residente -->
+    <div class="actions-container mt-5">
+      <h6 class="text-lg font-semibold mb-4">Acciones por Residente</h6>
+      <div
+        *ngFor="let residente of filteredRows"
+        class="flex items-center justify-between mb-2 bg-gray-100 rounded-lg p-4 shadow-md"
+      >
+        <span class="text-sm">
+          <strong>{{ residente.nombre }} {{ residente.apellido }}</strong> - Apodo: {{ residente.apodo }} - Comercio:
+          {{ residente.comercio }}
+        </span>
+        <div class="flex items-center gap-3">
+          <button
+            type="button"
+            class="btn btn-primary px-4 py-1"
+            (click)="editarResidente(residente)"
+          >
+            Editar
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger px-4 py-1"
+            (click)="eliminarResidente(residente.idResidente)"
+          >
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  

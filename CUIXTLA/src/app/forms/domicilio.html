@@ -2,42 +2,46 @@
     <h2 class="text-xl font-bold mb-4 text-center">Asociar Domicilio a Residente</h2>
   
     <!-- Seleccionar residente -->
-    <div class="mb-4">
-      <label for="residente" class="block text-sm font-medium text-gray-700">Residente</label>
-      <select
-        id="residente"
-        [(ngModel)]="selectedResidenteId"
-        class="form-select mt-1 block w-full rounded border-gray-300 shadow-sm"
-      >
-        <option [value]="null">Selecciona un residente</option>
-        <option *ngFor="let residente of residentes" [value]="residente.idResidente">
-          {{ residente.nombre }} {{ residente.apellido }} (ID: {{ residente.idResidente }})
-        </option>
-      </select>
-    </div>
-  
-    <!-- Formulario de domicilio -->
-    <div class="mb-4">
-      <label for="direccion" class="block text-sm font-medium text-gray-700">Dirección</label>
-      <input
-        id="direccion"
-        type="text"
-        [(ngModel)]="domicilio.direccion"
-        placeholder="Dirección"
-        class="form-input mt-1 block w-full rounded border-gray-300 shadow-sm"
-      />
-    </div>
-  
-    <div class="mb-4">
-      <label for="referencia" class="block text-sm font-medium text-gray-700">Referencia</label>
-      <input
-        id="referencia"
-        type="text"
-        [(ngModel)]="domicilio.referencia"
-        placeholder="Referencia"
-        class="form-input mt-1 block w-full rounded border-gray-300 shadow-sm"
-      />
-    </div>
+<div class="mb-4">
+  <label for="residente" class="block text-sm font-medium text-gray-700">Residente</label>
+  <select
+    id="residente"
+    [(ngModel)]="selectedResidenteId"
+    class="form-select mt-1 block w-full rounded border-gray-300 shadow-sm"
+  >
+    <option [value]="null">Selecciona un residente</option>
+    <option *ngFor="let residente of residentes" [value]="residente.idResidente">
+      {{ residente.nombre }} {{ residente.apellido }} (ID: {{ residente.idResidente }})
+    </option>
+  </select>
+  <p *ngIf="!selectedResidenteId" class="text-red-600 text-sm mt-1">Debe seleccionar un residente.</p>
+</div>
+
+<!-- Formulario de domicilio -->
+<div class="mb-4">
+  <label for="direccion" class="block text-sm font-medium text-gray-700">Dirección</label>
+  <input
+    id="direccion"
+    type="text"
+    [(ngModel)]="domicilio.direccion"
+    placeholder="Dirección"
+    class="form-input mt-1 block w-full rounded border-gray-300 shadow-sm"
+  />
+  <p *ngIf="!domicilio.direccion" class="text-red-600 text-sm mt-1">La dirección es requerida.</p>
+</div>
+
+<div class="mb-4">
+  <label for="referencia" class="block text-sm font-medium text-gray-700">Referencia</label>
+  <input
+    id="referencia"
+    type="text"
+    [(ngModel)]="domicilio.referencia"
+    placeholder="Referencia"
+    class="form-input mt-1 block w-full rounded border-gray-300 shadow-sm"
+  />
+  <p *ngIf="!domicilio.referencia" class="text-red-600 text-sm mt-1">La referencia es requerida.</p>
+</div>
+
   
     <!-- Coordenadas -->
     <div class="mb-4">
@@ -57,10 +61,12 @@
   
     <!-- Botón de guardar -->
     <button
-      class="btn btn-primary w-full mt-4 hover:bg-blue-600 text-white px-4 py-2 rounded"
-      (click)="guardarDomicilio()"
+    class="btn btn-primary w-full mt-4 hover:bg-blue-600 text-white px-4 py-2 rounded"
+    [disabled]="!camposValidos()" 
+    (click)="guardarDomicilio()"
     >
-      Guardar Domicilio
+    Guardar Domicilio
     </button>
+
   </div>
   

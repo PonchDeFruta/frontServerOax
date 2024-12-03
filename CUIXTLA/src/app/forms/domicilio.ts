@@ -69,6 +69,16 @@ export class DomicilioComponent implements OnInit {
       }
     );
   }
+  // Verifica si todos los campos requeridos están completos
+camposValidos(): boolean {
+  return (
+    !!this.selectedResidenteId && // Verifica que se seleccionó un residente
+    !!this.domicilio.direccion && // Verifica que la dirección no está vacía
+    !!this.domicilio.referencia && // Verifica que la referencia no está vacía
+    !!this.domicilio.coordenadas // Verifica que las coordenadas están seleccionadas
+  );
+}
+
 
   // Reiniciar el formulario
   resetFormulario() {
