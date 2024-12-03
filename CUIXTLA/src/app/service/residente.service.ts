@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ResidenteService {
-  private apiUrl = '/api/residentes'; // Cambia esta URL según tu servidor
+  private apiUrl = 'http://localhost:8080/api/residentes'; // Cambia esta URL según tu servidor
 
   constructor(private http: HttpClient) {}
 
