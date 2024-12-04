@@ -1,191 +1,203 @@
-<div class="mb-5 flex items-center justify-between">
-    <h5 class="text-lg font-semibold dark:text-white-light">
-      Consulta de anuncios en la base de datos
-    </h5>
+<div class="min-h-screen flex flex-col justify-center items-center bg-gray-100 dark:bg-[#121212] p-8">
+
+  <!-- Título principal -->
+  <div class="mb-8 text-center">
+    <h5 class="text-2xl font-semibold text-gray-900 dark:text-white-light">Consulta de Anuncios</h5>
   </div>
-  
-  <div class="w-full flex flex-row gap-8">
+
+  <!-- Contenedor de anuncios -->
+  <div class="w-full max-w-4xl flex flex-col gap-8">
+
     <!-- Anuncios recientes -->
-    <div class="w-1/2">
-      <h5 class="text-primary text-lg text-center font-bold mb-5">
-        Anuncios Recientes
-      </h5>
-  
-      <!-- Mostrar mensaje si no hay anuncios -->
-      <div *ngIf="anuncios.length === 0" class="text-center text-gray-500">
-        <p>En este momento no hay anuncios.</p>
-      </div>
-  
-      <!-- Mostrar lista de anuncios si hay datos -->
-      <div *ngFor="let anuncio of anuncios" class="panel">
-        <div
-          class="p-5 w-full max-w-[30rem] rounded border border-[#e0e6ed] bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none"
-        >
-          <div class="flex flex-col">
-            <div class="flex flex-row justify-between">
-              <p class="font-bold text-lg text-primary">
-                {{ anuncio.titulo }} - {{ anuncio.comercio }}
-              </p>
-              <button
-                type="button"
-                class="btn btn-primary"
-                (click)="openModal(modal20)"
-              >
-                Editar
-              </button>
-            </div>
-            <!-- Modal -->
-            <ngx-custom-modal #modal20 customClass="modal-top auth-modal">
-              <ng-template #modalHeader>
-                <div class="!py-5">Editar</div>
-              </ng-template>
-              <ng-template #modalBody>
-                <label for="ctnTitle">Título:</label>
-                <input
-                  id="ctnTitle"
-                  type="text"
-                  [(ngModel)]="input"
-                  placeholder="Título del anuncio"
-                  class="form-input"
-                  required
-                />
-                <label for="ctnDescription">Descripción:</label>
-                <textarea
-                  id="ctnDescription"
-                  rows="3"
-                  class="form-textarea"
-                  placeholder=" "
-                  required
-                ></textarea>
-                <label>Residente:</label>
-                <div class="mb-5">
-                  <ng-select
-                    [(ngModel)]="input"
-                    [items]="residentes"
-                    bindLabel="name"
-                    bindValue="id"
-                    placeholder="Seleccione un residente"
-                  ></ng-select>
+    <div class="w-full">
+      <h5 class="text-primary text-lg text-center font-bold mb-5">Anuncios Recientes</h5>
+
+      <!-- Lista de anuncios -->
+      <div class="space-y-6">
+        <div *ngFor="let anuncio of anuncios" class="flex justify-center">
+          <div class="w-full max-w-[30rem] rounded-lg border border-[#e0e6ed] bg-white shadow-lg p-6">
+
+            <!-- Contenido del anuncio -->
+            <div class="flex flex-col space-y-6">
+              <!-- Título y botones (Editar y Eliminar) -->
+              <div class="flex justify-between items-center">
+                <div>
+                  <p class="font-bold text-lg text-primary">{{ anuncio.titulo }} <span class="font-medium text-gray-600">{{ anuncio.comercio }}</span></p>
                 </div>
-              </ng-template>
-              <ng-template #modalFooter>
-                <div class="flex justify-around">
-                  <button type="button" class="btn btn-success" (click)="modal20.close()">Guardar</button>
-                  <button type="button" class="btn btn-danger" (click)="modal20.close()">Cancelar</button>
+                <div class="flex space-x-3">
+                  <!-- Botón Editar -->
+                  <button type="button" class="btn btn-primary" (click)="modal20.open()">Editar</button>
+
+                  <!-- Botón Eliminar -->
+                  <button type="button" class="btn btn-danger" (click)="openDeleteModal(anuncio)">Eliminar</button>
                 </div>
-              </ng-template>
-            </ngx-custom-modal>
-  
-            <div class="flex flex-col space-y-5">
-              <h5 class="text-[15px] font-semibold text-[#3b3f5c] dark:text-white-light">
-                {{ anuncio.residente }}
-              </h5>
-              <p class="text-white-dark">{{ anuncio.fechaHora }}</p>
-  
-              <!-- Mostrar contenido del mensaje o reproductor de audio -->
-              <div *ngIf="anuncio.esAudio; else textContent">
-                <audio controls class="w-full">
-                  <source [src]="getAudioUrl(anuncio.contenidoDelMensaje)" type="audio/mpeg" />
-                  Tu navegador no soporta el elemento de audio.
-                </audio>
-                <button
-                  class="btn btn-primary mt-2"
-                  (click)="downloadAudio(anuncio.contenidoDelMensaje)"
-                >
-                  Descargar audio
-                </button>
               </div>
-              <ng-template #textContent>
-                <p class="font-semibold text-white-dark">{{ anuncio.descripcion }}</p>
-              </ng-template>
+
+              <!-- Modal para Editar -->
+                <!-- Modal para Editar -->
+                <ngx-custom-modal #modal20 customClass="modal-top auth-modal">
+                  <ng-template #modalHeader>
+                    <div class="!py-5 text-center font-semibold">Editar Anuncio</div>
+                  </ng-template>
+
+                  <ng-template #modalBody>
+                    <!-- Título -->
+                    <label for="ctnTitle" class="block">Título:</label>
+                    <input 
+                      id="ctnTitle" 
+                      type="text" 
+                      [(ngModel)]="selectedAnuncio.titulo" 
+                      placeholder="Título del anuncio" 
+                      class="form-input w-full mb-4" 
+                      required
+                    />
+
+                    <!-- Contenido del Mensaje -->
+                    <label for="ctnDescription" class="block">Contenido del mensaje:</label>
+                    <input 
+                      id="ctnDescription" 
+                      *ngIf="!isAudio" 
+                      [(ngModel)]="selectedAnuncio.contenidoDelMensaje"
+                      type="text" 
+                      placeholder="Contenido del mensaje"
+                      class="form-input w-full mb-4" 
+                      required
+                    />
+                    
+                    <!-- Cargar archivo si es audio -->
+                    <input 
+                      *ngIf="isAudio" 
+                      type="file" 
+                      (change)="onFileSelected($event)" 
+                      class="form-input w-full mb-4"
+                    />
+                    
+                    <!-- Fecha del anuncio -->
+                    <label for="ctnFecha" class="block">Fecha:</label>
+                    <input 
+                      id="ctnFecha" 
+                      type="datetime-local" 
+                      [(ngModel)]="selectedAnuncio.fechaMensaje"
+                      class="form-input w-full mb-4"
+                      required
+                    />
+
+                    <!-- Residente -->
+                    <label class="block">Residente:</label>
+                    <div class="mb-5">
+                      <ng-select 
+                        [(ngModel)]="selectedAnuncio.idResidente"
+                        [items]="residentes" 
+                        bindLabel="nombre" 
+                        bindValue="id" 
+                        [appendTo]="'body'" 
+                        placeholder="Seleccione un residente"
+                      ></ng-select>
+                    </div>
+
+                    <!-- Checkbox para seleccionar si es audio -->
+                    <div>
+                      <label>
+                        <input 
+                          type="checkbox" 
+                          [(ngModel)]="isAudio" 
+                          (change)="onAudioChange()" 
+                        />
+                        ¿Es audio?
+                      </label>
+                    </div>
+                  </ng-template>
+
+                  <ng-template #modalFooter>
+                    <div class="flex justify-around">
+                      <button 
+                        type="button" 
+                        class="btn btn-success" 
+                        (click)="updateAnuncio()"
+                      >
+                        Guardar
+                      </button>
+                      <button 
+                        type="button" 
+                        class="btn btn-danger" 
+                        (click)="modal20.close()"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </ng-template>
+                </ngx-custom-modal>
+
+                <!-- Modal de confirmación para Eliminar -->
+                <ngx-custom-modal #deleteModal customClass="modal-top auth-modal">
+                  <ng-template #modalHeader>
+                    <div class="!py-5 text-center font-semibold">Eliminar Anuncio</div>
+                  </ng-template>
+
+                  <ng-template #modalBody>
+                    <p class="text-center">¿Estás seguro de que deseas eliminar este anuncio?</p>
+                  </ng-template>
+
+                  <ng-template #modalFooter>
+                    <div class="flex justify-around">
+                      <button 
+                        type="button" 
+                        class="btn btn-danger" 
+                        (click)="deleteAnuncio(selectedAnuncio)"
+                      >
+                        Sí, eliminar
+                      </button>
+                      <button 
+                        type="button" 
+                        class="btn btn-secondary" 
+                        (click)="deleteModal.close()"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </ng-template>
+                </ngx-custom-modal>
+
+
+              <!-- Detalles del anuncio -->
+              <div class="space-y-2">
+                <div class="flex justify-between items-center">
+                  <h6 class="text-sm font-semibold text-[#3b3f5c] dark:text-white-light">Residente:</h6>
+                  <p class="text-sm text-gray-600 dark:text-white-dark">{{ anuncio.residente }}</p>
+                </div>
+                <div class="flex justify-between items-center">
+                  <h6 class="text-sm font-semibold text-[#3b3f5c] dark:text-white-light">Fecha y Hora:</h6>
+                  <p class="text-xs text-gray-600 dark:text-white-dark">{{ anuncio.fechaHora }}</p>
+                </div>
+
+                <!-- Si es un anuncio de tipo audio -->
+                <div *ngIf="anuncio.esAudio" class="mt-4 p-4 bg-gray-50 dark:bg-[#1f1f1f] rounded-lg shadow-md">
+                  <h6 class="font-semibold text-lg text-primary">Archivo de Audio</h6>
+                  
+                  <!-- Barra de Reproducción -->
+                  <audio controls class="w-full mt-2 rounded-lg border-2 border-gray-300">
+                    <source [src]="getAudioUrl(anuncio.contenidoDelMensaje)" type="audio/mpeg" />
+                    Tu navegador no soporta el elemento de audio.
+                  </audio>
+
+                  <!-- Botón de Descargar Audio -->
+                  <button class="mt-2 btn btn-secondary" (click)="downloadAudio(anuncio.contenidoDelMensaje)" target="_blank">
+                    Descargar Audio
+                  </button>
+                </div>
+
+                <!-- Si NO es un anuncio de tipo audio, mostrar la descripción -->
+                <div *ngIf="!anuncio.esAudio" class="mt-4 p-4 bg-gray-50 dark:bg-[#1f1f1f] rounded-lg shadow-md">
+                  <h6 class="font-semibold text-lg text-primary">Descripción del Anuncio</h6>
+                  <p class="text-sm text-gray-800 dark:text-white-dark">{{ anuncio.descripcion }}</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    
-    <!-- Aplicar filtro -->
-    <div class="w-1/2">
-        <h5 class="text-rose-500 text-lg text-center font-bold mb-5"> Filtros </h5>
-        <!-- Tabla para mostrar los filtros aplicados -->
-        <table class="table-auto w-full mb-5">
-            <thead>
-                <tr>
-                    <th class="px-4 py-2">Filtro</th>
-                    <th class="px-4 py-2">Valor</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="border px-4 py-2">Año</td>
-                    <td class="border px-4 py-2">{{ selectedYear || 'No seleccionado' }}</td>
-                </tr>
-                <tr>
-                    <td class="border px-4 py-2">Mes</td>
-                    <td class="border px-4 py-2">{{ selectedMonth || 'No seleccionado' }}</td>
-                </tr>
-                <tr>
-                    <td class="border px-4 py-2">Día</td>
-                    <td class="border px-4 py-2">{{ selectedDay || 'No seleccionado' }}</td>
-                </tr>
-                <tr>
-                    <td class="border px-4 py-2">Buscar</td>
-                    <td class="border px-4 py-2">{{ search2 || 'No ingresado' }}</td>
-                </tr>
-            </tbody>
-        </table>
 
-            <!-- Filtros -->
-<!-- Filtros -->
-<div class="mb-5 flex items-center justify-between">
-  <ng-select
-    [(ngModel)]="selectedYear"
-    [items]="years"
-    (change)="filterAnuncios()"
-    placeholder="Seleccione un año"
-    class="w-1/4"
-  ></ng-select>
-  <ng-select
-    [(ngModel)]="selectedMonth"
-    [items]="months"
-    (change)="generateDaysOptions(); filterAnuncios()"
-    placeholder="Seleccione un mes"
-    class="w-1/4"
-  ></ng-select>
-  <ng-select
-    [(ngModel)]="selectedDay"
-    [items]="days"
-    (change)="filterAnuncios()"
-    placeholder="Seleccione un día"
-    class="w-1/4"
-  ></ng-select>
-  <div class="ltr:ml-auto rtl:mr-auto w-1/4">
-    <input
-      [(ngModel)]="search2"
-      (input)="filterAnuncios()"
-      type="text"
-      class="form-input"
-      placeholder="Buscar Anuncio..."
-    />
   </div>
+
 </div>
-
-<!-- Mostrar lista de anuncios filtrados -->
-<div *ngFor="let anuncio of filteredAnuncios" class="panel">
-  <div class="p-5 w-full max-w-[30rem] rounded border border-[#e0e6ed] bg-white">
-    <div class="flex flex-col">
-      <div class="flex flex-row justify-between">
-        <p class="font-bold text-lg text-primary">
-          {{ anuncio.titulo }} - {{ anuncio.comercio }}
-        </p>
-      </div>
-      <p class="text-white-dark">{{ anuncio.fechaHora }}</p>
-      <p class="font-semibold text-white-dark">{{ anuncio.descripcion }}</p>
-    </div>
-  </div>
-</div>
-
-
-    </div>
-  </div>
-  
