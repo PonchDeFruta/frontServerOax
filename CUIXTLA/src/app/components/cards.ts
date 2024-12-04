@@ -128,6 +128,7 @@ export class AnunciosComponent implements OnInit, AfterViewInit {
     }
   }
 
+
   // Abrir el modal de edición
   openModal(modal: NgxCustomModalComponent, anuncio: any): void {
     if (modal && typeof modal.open === 'function') {
@@ -235,6 +236,9 @@ export class AnunciosComponent implements OnInit, AfterViewInit {
       }
     );
   }
+  
+  onAudioToggle(): void { if (!this.selectedAnuncio.esAudio) { this.selectedAnuncio.contenidoDelMensaje = ''; // Limpiar contenido si no es audio
+  } 
 }
 
-
+}
