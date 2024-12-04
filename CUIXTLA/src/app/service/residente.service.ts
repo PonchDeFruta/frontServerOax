@@ -24,4 +24,10 @@ export class ResidenteService {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
 
+  actualizarResidente(idResidente: number, residente: any): Observable<any> {
+    const url = `${this.apiUrl}/${idResidente}`;
+    return this.http.put<any>(url, residente);
+  }
+  
+
 }

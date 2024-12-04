@@ -1,0 +1,52 @@
+<div class="panel mt-6 pb-0">
+    <!-- Barra de búsqueda -->
+    <div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
+      <h5 class="text-lg font-semibold dark:text-white-light">Dispositivos registrados en el sistema</h5>
+      <div class="ltr:ml-auto rtl:mr-auto">
+        <input
+          [(ngModel)]="search"
+          type="text"
+          class="form-input"
+          placeholder="Buscar..."
+          (ngModelChange)="applyFilter()"
+        />
+      </div>
+    </div>
+  
+    <!-- Tabla de dispositivos -->
+    <div class="datatable custom-striped">
+      <ng-datatable
+        [rows]="filteredDispositivos"
+        [columns]="cols"
+        [search]="search"
+        skin="custom-striped custom-hover"
+      ></ng-datatable>
+    </div>
+  
+    <!-- Acciones por dispositivo -->
+    <div class="actions-container mt-5">
+      <h6 class="text-lg font-semibold mb-4">Acciones por Dispositivo</h6>
+      <div
+        *ngFor="let dispositivo of filteredDispositivos"
+        class="flex flex-col gap-4 bg-gray-100 rounded-lg p-4 shadow-md"
+      >
+        <div class="flex items-center justify-between">
+          <span class="text-sm">
+            <strong>{{ dispositivo.nombreDispositivo }}</strong> - Contador de Mensajes: {{ dispositivo.contadorRecepcionMensajes }}
+            <br />
+            <strong>ID del Mensaje:</strong> {{ dispositivo.idMensaje }}
+          </span>
+          <div class="flex items-center gap-3">
+            <button
+              type="button"
+              class="btn btn-danger px-4 py-1"
+              (click)="eliminarDispositivo(dispositivo.idDispositivo)"
+            >
+              Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

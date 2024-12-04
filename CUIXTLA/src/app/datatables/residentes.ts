@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ResidenteService } from '../service/residente.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-residentes',
@@ -11,6 +12,9 @@ export class ResidentesComponent implements OnInit {
   residentes: any[] = []; // Lista completa de residentes
   filteredRows: any[] = []; // Lista filtrada dinámicamente
   search: string = ''; // Término de búsqueda
+  isEditing: boolean = false; // Modo de edición
+  editResidente: any = null; // Residente que se está editando
+
   cols = [
     { field: 'nombre', title: 'Nombre' },
     { field: 'apellido', title: 'Apellido' },
@@ -18,13 +22,16 @@ export class ResidentesComponent implements OnInit {
     { field: 'comercio', title: 'Comercio' },
   ];
 
-  constructor(private residentesService: ResidenteService) {}
+  constructor(private residentesService: ResidenteService, private http: HttpClient) {}
+
+  ngOnInit(): void {
+    this.getResidentes();
+  }
 
   // Obtener la lista completa de residentes y procesarla
   getResidentes(): void {
     this.residentesService.getResidentes().subscribe(
       (data) => {
-        // Extraer solo los campos necesarios
         this.residentes = data.map((residente: any) => ({
           idResidente: residente.idResidente,
           nombre: residente.nombre,
@@ -32,7 +39,7 @@ export class ResidentesComponent implements OnInit {
           apodo: residente.apodo,
           comercio: residente.comercio,
         }));
-        this.filteredRows = [...this.residentes]; // Inicializar la lista filtrada
+        this.filteredRows = [...this.residentes];
       },
       (error) => {
         console.error('Error al obtener residentes:', error);
@@ -51,10 +58,35 @@ export class ResidentesComponent implements OnInit {
     );
   }
 
-  // Lógica para editar un residente
+  // Lógica para activar el modo de edición
   editarResidente(residente: any): void {
-    console.log('Editar residente:', residente);
-    // Implementar la lógica de edición aquí (abrir modal, navegar, etc.)
+    this.isEditing = true;
+    this.editResidente = { ...residente }; // Crear una copia para edición
+  }
+
+  // Guardar los cambios del residente editado
+  guardarEdicion(): void {
+    this.residentesService
+      .actualizarResidente(this.editResidente.idResidente, this.editResidente)
+      .subscribe(
+        (response: any) => {
+          alert(response.message || 'Residente actualizado con éxito');
+          this.isEditing = false;
+          this.editResidente = null;
+          this.getResidentes(); // Refrescar la lista
+        },
+        (error: any) => { // Define el tipo de error explícitamente
+          console.error('Error al actualizar residente:', error);
+          alert('Error al actualizar el residente.');
+        }
+      );
+  }
+  
+  
+  // Cancelar la edición
+  cancelarEdicion(): void {
+    this.isEditing = false;
+    this.editResidente = null;
   }
 
   // Lógica para eliminar un residente
@@ -63,7 +95,6 @@ export class ResidentesComponent implements OnInit {
       this.residentesService.deleteResidente(idResidente).subscribe(
         (response) => {
           console.log('Residente eliminado:', response);
-          // Actualizar la lista de residentes filtrados
           this.filteredRows = this.filteredRows.filter(
             (residente) => residente.idResidente !== idResidente
           );
@@ -75,10 +106,5 @@ export class ResidentesComponent implements OnInit {
         }
       );
     }
-  }
-
-  // Cargar la lista de residentes al iniciar el componente
-  ngOnInit(): void {
-    this.getResidentes();
   }
 }

@@ -19,5 +19,4 @@ export class AnuncioService {
   crearAnuncio(payload: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/anuncios/crearAnuncio`, payload);
   }
-  
 }

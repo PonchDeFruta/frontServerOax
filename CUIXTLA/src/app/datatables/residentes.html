@@ -1,56 +1,92 @@
 <div class="panel mt-6 pb-0">
-    <!-- Barra de búsqueda -->
-    <div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
-      <h5 class="text-lg font-semibold dark:text-white-light">Residentes registrados en el sistema</h5>
-      <div class="ltr:ml-auto rtl:mr-auto">
-        <input
-          [(ngModel)]="search"
-          type="text"
-          class="form-input"
-          placeholder="Buscar..."
-          (ngModelChange)="applyFilter()"
-        />
-      </div>
-    </div>
-  
-    <!-- Tabla de residentes -->
-    <div class="datatable custom-striped">
-      <ng-datatable
-        [rows]="filteredRows"
-        [columns]="cols"
-        [search]="search"
-        skin="custom-striped custom-hover"
-      ></ng-datatable>
-    </div>
-  
-    <!-- Acciones por residente -->
-    <div class="actions-container mt-5">
-      <h6 class="text-lg font-semibold mb-4">Acciones por Residente</h6>
-      <div
-        *ngFor="let residente of filteredRows"
-        class="flex items-center justify-between mb-2 bg-gray-100 rounded-lg p-4 shadow-md"
-      >
-        <span class="text-sm">
-          <strong>{{ residente.nombre }} {{ residente.apellido }}</strong> - Apodo: {{ residente.apodo }} - Comercio:
-          {{ residente.comercio }}
-        </span>
-        <div class="flex items-center gap-3">
-          <button
-            type="button"
-            class="btn btn-primary px-4 py-1"
-            (click)="editarResidente(residente)"
-          >
-            Editar
-          </button>
-          <button
-            type="button"
-            class="btn btn-danger px-4 py-1"
-            (click)="eliminarResidente(residente.idResidente)"
-          >
-            Eliminar
-          </button>
-        </div>
-      </div>
+  <!-- Barra de búsqueda -->
+  <div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
+    <h5 class="text-lg font-semibold dark:text-white-light">Residentes registrados en el sistema</h5>
+    <div class="ltr:ml-auto rtl:mr-auto">
+      <input
+        [(ngModel)]="search"
+        type="text"
+        class="form-input"
+        placeholder="Buscar..."
+        (ngModelChange)="applyFilter()"
+      />
     </div>
   </div>
-  
+
+  <!-- Tabla de residentes -->
+  <div class="datatable custom-striped">
+    <ng-datatable
+      [rows]="filteredRows"
+      [columns]="cols"
+      [search]="search"
+      skin="custom-striped custom-hover"
+    ></ng-datatable>
+  </div>
+
+  <!-- Acciones por residente -->
+  <div class="actions-container mt-5">
+    <h6 class="text-lg font-semibold mb-4">Acciones por Residente</h6>
+    <div
+      *ngFor="let residente of filteredRows"
+      class="flex flex-col gap-4 bg-gray-100 rounded-lg p-4 shadow-md"
+    >
+      <!-- Mostrar información del residente -->
+      <ng-container *ngIf="!isEditing || editResidente?.idResidente !== residente.idResidente">
+        <div class="flex items-center justify-between">
+          <span class="text-sm">
+            <strong>{{ residente.nombre }} {{ residente.apellido }}</strong> - Apodo: {{ residente.apodo }} - Comercio:
+            {{ residente.comercio }}
+          </span>
+          <div class="flex items-center gap-3">
+            <button
+              type="button"
+              class="btn btn-primary px-4 py-1"
+              (click)="editarResidente(residente)"
+            >
+              Editar
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger px-4 py-1"
+              (click)="eliminarResidente(residente.idResidente)"
+            >
+              Eliminar
+            </button>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Mostrar formulario de edición -->
+      <ng-container *ngIf="isEditing && editResidente?.idResidente === residente.idResidente">
+        <form class="flex flex-col gap-4" (ngSubmit)="guardarEdicion()">
+          <div class="flex flex-col gap-2">
+            <label class="text-sm">Nombre:</label>
+            <input type="text" class="form-input" [(ngModel)]="editResidente.nombre" name="nombre" required />
+          </div>
+          <div class="flex flex-col gap-2">
+            <label class="text-sm">Apellido:</label>
+            <input type="text" class="form-input" [(ngModel)]="editResidente.apellido" name="apellido" required />
+          </div>
+          <div class="flex flex-col gap-2">
+            <label class="text-sm">Apodo:</label>
+            <input type="text" class="form-input" [(ngModel)]="editResidente.apodo" name="apodo" />
+          </div>
+          <div class="flex flex-col gap-2">
+            <label class="text-sm">Comercio:</label>
+            <input type="text" class="form-input" [(ngModel)]="editResidente.comercio" name="comercio" />
+          </div>
+          <div class="flex items-center gap-3">
+            <button type="submit" class="btn btn-success px-4 py-1">Guardar</button>
+            <button
+              type="button"
+              class="btn btn-secondary px-4 py-1"
+              (click)="cancelarEdicion()"
+            >
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </ng-container>
+    </div>
+  </div>
+</div>

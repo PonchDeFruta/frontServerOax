@@ -1,0 +1,104 @@
+<div class="panel mt-6 pb-0">
+  <!-- Barra de búsqueda -->
+  <div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
+    <h5 class="text-lg font-semibold dark:text-white-light">Domicilios registrados en el sistema</h5>
+    <div class="ltr:ml-auto rtl:mr-auto">
+      <input
+        [(ngModel)]="search"
+        type="text"
+        class="form-input"
+        placeholder="Buscar..."
+        (ngModelChange)="applyFilter()"
+      />
+    </div>
+  </div>
+
+  <!-- Tabla de domicilios -->
+  <div class="datatable custom-striped">
+    <ng-datatable
+      [rows]="filteredRows"
+      [columns]="cols"
+      [search]="search"
+      skin="custom-striped custom-hover"
+    ></ng-datatable>
+  </div>
+
+  <!-- Acciones por domicilio -->
+  <div class="actions-container mt-5">
+    <h6 class="text-lg font-semibold mb-4">Acciones por Domicilio</h6>
+    <div
+      *ngFor="let domicilio of filteredRows"
+      class="flex flex-col gap-4 bg-gray-100 rounded-lg p-4 shadow-md"
+    >
+      <!-- Mostrar información del domicilio -->
+      <ng-container *ngIf="!isEditing || editDomicilio?.idDomicilio !== domicilio.idDomicilio">
+        <div class="flex items-center justify-between">
+          <span class="text-sm">
+            <strong>{{ domicilio.direccion }}</strong> - Referencia: {{ domicilio.referencia }} - Coordenadas:
+            {{ domicilio.coordenadas }}
+            <br />
+            <strong>Residente:</strong> {{ domicilio.residente }}
+          </span>
+          <div class="flex items-center gap-3">
+            <button
+              type="button"
+              class="btn btn-primary px-4 py-1"
+              (click)="editarDomicilio(domicilio)"
+            >
+              Editar
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger px-4 py-1"
+              (click)="eliminarDomicilio(domicilio.idDomicilio)"
+            >
+              Eliminar
+            </button>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Mostrar formulario de edición -->
+      <ng-container *ngIf="isEditing && editDomicilio?.idDomicilio === domicilio.idDomicilio">
+        <form class="flex flex-col gap-4" (ngSubmit)="guardarEdicion()">
+          <div class="flex flex-col gap-2">
+            <label class="text-sm">Dirección:</label>
+            <input type="text" class="form-input" [(ngModel)]="editDomicilio.direccion" name="direccion" required />
+          </div>
+          <div class="flex flex-col gap-2">
+            <label class="text-sm">Referencia:</label>
+            <input type="text" class="form-input" [(ngModel)]="editDomicilio.referencia" name="referencia" required />
+          </div>
+          <!-- Coordenadas con imagen interactiva -->
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Seleccionar Coordenadas</label>
+            <div class="relative border rounded shadow-md p-2 mx-auto w-[352px] h-[443px]">
+              <!-- Aquí la imagen se ajustará a las dimensiones especificadas -->
+              <img
+                src="assets/map-placeholder.png"
+                alt="Mapa"
+                (click)="setCoordinates($event)"
+                class="cursor-pointer block mx-auto w-full h-full object-contain"
+              />
+              <p class="text-sm mt-2 text-center">
+                Coordenadas: {{ editDomicilio.coordenadas || 'Sin seleccionar' }}
+              </p>
+            </div>
+          </div>
+          
+
+          <div class="flex items-center gap-3">
+            <button type="submit" class="btn btn-success px-4 py-1">Guardar</button>
+            <button
+              type="button"
+              class="btn btn-secondary px-4 py-1"
+              (click)="cancelarEdicion()"
+            >
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </ng-container>
+    </div>
+  </div>
+</div>

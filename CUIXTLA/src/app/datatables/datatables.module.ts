@@ -20,6 +20,8 @@ import { StickyHeaderDatatableComponent } from './sticky-header';
 import { CloneHeaderDatatableComponent } from './clone-header';
 import { ColumnChooserDatatableComponent } from './column-chooser';
 import { ResidentesComponent } from './residentes';
+import { DomiciliosComponent } from '../datatables/domicilios.component'; // Nueva importación
+import { DispositivosComponent } from './dispositivos.component';
 
 const routes: Routes = [
     { path: 'datatables/basic', component: BasicDatatableComponent, data: { title: 'Basic Table' } },
@@ -81,7 +83,14 @@ const routes: Routes = [
         data: { title: 'Column Chooser Table' },
     },
     { path: 'datatables/residentes', component: ResidentesComponent, data: { title: 'Residentes' } },
+    
+    // Ruta para domicilios
+    { path: 'datatables/domicilios', component: DomiciliosComponent, data: { title: 'Domicilios' } },
+
+    { path: 'datatables/dispositivos', component: DispositivosComponent, data: { title: 'Dispositivos' } },
+
 ];
+
 @NgModule({
     imports: [RouterModule.forChild(routes), CommonModule, SharedModule.forRoot()],
     declarations: [
@@ -100,6 +109,8 @@ const routes: Routes = [
         CloneHeaderDatatableComponent,
         ColumnChooserDatatableComponent,
         ResidentesComponent,
+        DomiciliosComponent,
+        DispositivosComponent, // Nueva declaración del componente
     ],
     providers: [],
 })

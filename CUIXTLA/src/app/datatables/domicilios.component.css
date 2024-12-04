@@ -1,0 +1,18 @@
+/* Encabezados */
+
+.custom-striped thead {
+    background-color: #800040;
+    color: #800040;
+    font-weight: bold;
+}
+
+.custom-striped tbody tr:nth-child(even) {
+    background-color: #fa5eac15; /* Fondo para filas pares */
+}
+
+/* Personalización general de la tabla */
+.custom-striped,
+.custom-hover {
+    width: 100%;
+    border-collapse: collapse;
+}
