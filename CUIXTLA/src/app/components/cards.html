@@ -5,16 +5,24 @@
     <h5 class="text-2xl font-semibold text-gray-900 dark:text-white-light">Consulta de Anuncios</h5>
   </div>
 
+  <!-- Barra para alternar entre "Hoy" y "Todos" -->
+  <div class="mb-5 flex justify-center items-center">
+    <button
+      class="btn btn-secondary w-1/4"
+      (click)="toggleAnunciosMode()">
+      Mostrar {{ isAnunciosHoy ? 'Todos' : 'Hoy' }} los anuncios
+    </button>
+  </div>
+
   <!-- Contenedor de anuncios -->
   <div class="w-full max-w-4xl flex flex-col gap-8">
-
     <!-- Anuncios recientes -->
     <div class="w-full">
       <h5 class="text-primary text-lg text-center font-bold mb-5">Anuncios Recientes</h5>
 
       <!-- Lista de anuncios -->
       <div class="space-y-6">
-        <div *ngFor="let anuncio of anuncios" class="flex justify-center">
+        <div *ngFor="let anuncio of (isAnunciosHoy ? anuncios : anunciosTodos)" class="flex justify-center">
           <div class="w-full max-w-[30rem] rounded-lg border border-[#e0e6ed] bg-white shadow-lg p-6">
 
             <!-- Contenido del anuncio -->
@@ -22,9 +30,7 @@
               <!-- Título y botones (Editar y Eliminar) -->
               <div class="flex justify-between items-center">
                 <div>
-                  <p class="font-bold text-lg text-primary">{{ anuncio.titulo }} 
-                    <span class="font-medium text-gray-600">{{ anuncio.comercio }}</span>
-                  </p>
+                  <p class="font-bold text-lg text-primary">{{ anuncio.titulo }} <span class="font-medium text-gray-600">{{ anuncio.comercio }}</span></p>
                 </div>
                 <div class="flex space-x-3">
                   <!-- Botón Editar -->
@@ -106,7 +112,7 @@
                         [(ngModel)]="isAudio" 
                         (change)="onAudioChange()" 
                       />
-                      ¿Este anuncio es con audio?
+                      ¿Es audio?
                     </label>
                   </div>
                 </ng-template>
@@ -198,7 +204,6 @@
         </div>
       </div>
     </div>
-
   </div>
 
 </div>

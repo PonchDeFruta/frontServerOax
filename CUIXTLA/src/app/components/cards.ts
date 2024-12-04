@@ -18,6 +18,8 @@ export class AnunciosComponent implements OnInit, AfterViewInit {
   isAudio: boolean = false; // Para controlar si es audio o texto
   fileToUpload: File | null = null; // Archivo seleccionado para subir
   selectedResidenteId: number | null = null;
+  isAnunciosHoy: boolean = true; // Modo por defecto: mostrar anuncios de hoy
+
 
   @ViewChild('deleteModal') deleteModal!: NgxCustomModalComponent;  // Uso de "!" para evitar el error
 
@@ -64,6 +66,16 @@ export class AnunciosComponent implements OnInit, AfterViewInit {
       }
     );
   }
+    // Cambiar entre "Hoy" y "Todos" los anuncios
+  toggleAnunciosMode() {
+    this.isAnunciosHoy = !this.isAnunciosHoy; // Alternar el modo
+    if (this.isAnunciosHoy) {
+      this.getAnunciosHoy(); // Cargar anuncios de hoy
+    } else {
+      this.getAnunciosTodos(); // Cargar todos los anuncios
+    }
+  }
+
 
   // Obtener lista de residentes
   loadResidentes() {
@@ -163,16 +175,19 @@ export class AnunciosComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // Eliminar un anuncio
   deleteAnuncio(): void {
-    const id = this.selectedAnuncio.idMensaje;  // Usamos el idMensaje del anuncio seleccionado
+    const id = this.selectedAnuncio.idMensaje;
     const url = `http://localhost:8080/anuncios/${id}`;
-
+  
     this.http.delete(url).subscribe(
       (response) => {
-        console.log('Anuncio eliminado:', response);
-        // Actualizamos la lista de anuncios después de eliminar
-        this.anuncios = this.anuncios.filter(a => a.idMensaje !== id);
+        // Eliminar el anuncio de la lista local según el modo actual
+        if (this.isAnunciosHoy) {
+          this.anuncios = this.anuncios.filter(a => a.idMensaje !== id);
+        } else {
+          this.anunciosTodos = this.anunciosTodos.filter(a => a.idMensaje !== id);
+        }
+  
         this.deleteModal.close(); // Cerrar el modal después de eliminar
         this.toastr.success(`Anuncio ID ${id} eliminado correctamente`, 'Operación exitosa');
       },
@@ -182,7 +197,7 @@ export class AnunciosComponent implements OnInit, AfterViewInit {
       }
     );
   }
-
+  
   updateAnuncio(anuncioId: number, updatedData: any): void {
     // Depuración para verificar que estamos pasando el idMensaje y los datos
     console.log('ID del anuncio a actualizar:', anuncioId);
@@ -204,21 +219,35 @@ export class AnunciosComponent implements OnInit, AfterViewInit {
       (response: any) => {
         console.log('Anuncio actualizado con éxito', response);
   
-        // Actualizar el anuncio en la lista local de anuncios
+        // Obtener el anuncio actualizado
         const updatedAnuncio = response; // Suponemos que la respuesta contiene el anuncio actualizado
   
-        // Si el ID ha cambiado (esto puede ser el caso si el backend devuelve un nuevo ID)
-        const index = this.anuncios.findIndex(anuncio => anuncio.idMensaje === anuncioId);
-        if (index !== -1) {
-          // Reemplazamos el anuncio antiguo con el actualizado
-          this.anuncios[index] = updatedAnuncio;
+        // Actualizar el anuncio en la lista local de anuncios
+        let index;
+        if (this.isAnunciosHoy) {
+          // Buscar y actualizar en la lista de anuncios de hoy
+          index = this.anuncios.findIndex(anuncio => anuncio.idMensaje === anuncioId);
+          if (index !== -1) {
+            this.anuncios[index] = updatedAnuncio; // Reemplazar el anuncio antiguo con el actualizado
+          } else {
+            this.anuncios.push(updatedAnuncio); // Si no se encuentra, añadirlo
+          }
         } else {
-          // Si no encontramos el anuncio, simplemente lo añadimos (esto podría suceder si el ID cambió)
-          this.anuncios.push(updatedAnuncio);
+          // Buscar y actualizar en la lista de todos los anuncios
+          index = this.anunciosTodos.findIndex(anuncio => anuncio.idMensaje === anuncioId);
+          if (index !== -1) {
+            this.anunciosTodos[index] = updatedAnuncio; // Reemplazar el anuncio antiguo con el actualizado
+          } else {
+            this.anunciosTodos.push(updatedAnuncio); // Si no se encuentra, añadirlo
+          }
         }
   
-        // Actualizamos los anuncios en la vista
-        this.getAnunciosHoy();  // O puedes usar getAnunciosTodos(), dependiendo de cuál lista quieras actualizar
+        // Volver a cargar la lista después de la actualización
+        if (this.isAnunciosHoy) {
+          this.getAnunciosHoy(); // Cargar los anuncios de hoy
+        } else {
+          this.getAnunciosTodos(); // Cargar todos los anuncios
+        }
   
         // Cerrar el modal de edición
         if (this.deleteModal) {
