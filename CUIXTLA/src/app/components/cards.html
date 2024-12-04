@@ -22,19 +22,20 @@
               <!-- Título y botones (Editar y Eliminar) -->
               <div class="flex justify-between items-center">
                 <div>
-                  <p class="font-bold text-lg text-primary">{{ anuncio.titulo }} <span class="font-medium text-gray-600">{{ anuncio.comercio }}</span></p>
+                  <p class="font-bold text-lg text-primary">{{ anuncio.titulo }} 
+                    <span class="font-medium text-gray-600">{{ anuncio.comercio }}</span>
+                  </p>
                 </div>
                 <div class="flex space-x-3">
                   <!-- Botón Editar -->
                   <button type="button" class="btn btn-primary" (click)="openModal(modal20, anuncio)">Editar</button>
-
 
                   <!-- Botón Eliminar -->
                   <button type="button" class="btn btn-danger" (click)="openDeleteModal(anuncio)">Eliminar</button>
                 </div>
               </div>
 
-                          <!-- Modal para Editar -->
+              <!-- Modal para Editar -->
               <ngx-custom-modal #modal20 customClass="modal-top auth-modal">
                 <ng-template #modalHeader>
                   <div class="!py-5 text-center font-semibold">Editar Anuncio</div>
@@ -90,7 +91,7 @@
                     [(ngModel)]="selectedResidenteId" 
                     [items]="residentes" 
                     bindLabel="nombre" 
-                    bindValue="id" 
+                    bindValue="idResidente" 
                     placeholder="Seleccione un residente"
                     [clearable]="true"
                     required
@@ -105,7 +106,7 @@
                         [(ngModel)]="isAudio" 
                         (change)="onAudioChange()" 
                       />
-                      ¿Es audio?
+                      ¿Este anuncio es con audio?
                     </label>
                   </div>
                 </ng-template>
@@ -137,32 +138,28 @@
                 </ng-template>
               </ngx-custom-modal>
 
-                <!-- Modal de confirmación para Eliminar -->
-                <ngx-custom-modal #deleteModal customClass="modal-top auth-modal">
-                  <ng-template #modalHeader>
-                    <div class="!py-5 text-center font-semibold">Eliminar Anuncio</div>
-                  </ng-template>
+              <!-- Modal de confirmación para Eliminar -->
+              <ngx-custom-modal #deleteModal customClass="modal-top auth-modal">
+                <ng-template #modalHeader>
+                  <div class="!py-5 text-center font-semibold">Eliminar Anuncio</div>
+                </ng-template>
 
-                  <ng-template #modalBody>
-                    <p class="text-center">¿Estás seguro de que deseas eliminar este anuncio?</p>
-                  </ng-template>
+                <ng-template #modalBody>
+                  <p class="text-center">¿Estás seguro de que deseas eliminar este anuncio?</p>
+                </ng-template>
 
-                  <ng-template #modalFooter>
-                    <div class="flex justify-around">
-
+                <ng-template #modalFooter>
+                  <div class="flex justify-around">
                     <button (click)="deleteAnuncio()" class="btn btn-danger">Eliminar Anuncio</button>
-
-                      <button 
-                        type="button" 
-                        class="btn btn-secondary" 
-                        (click)="deleteModal.close()"
-                      >
-                        Cancelar
-                      </button>
-                    </div>
-                  </ng-template>
-                </ngx-custom-modal>
-
+                    <button 
+                      type="button" 
+                      class="btn btn-secondary" 
+                      (click)="deleteModal.close()">
+                      Cancelar
+                    </button>
+                  </div>
+                </ng-template>
+              </ngx-custom-modal>
 
               <!-- Detalles del anuncio -->
               <div class="space-y-2">
@@ -178,7 +175,6 @@
                 <!-- Si es un anuncio de tipo audio -->
                 <div *ngIf="anuncio.esAudio" class="mt-4 p-4 bg-gray-50 dark:bg-[#1f1f1f] rounded-lg shadow-md">
                   <h6 class="font-semibold text-lg text-primary">Archivo de Audio</h6>
-                  
                   <!-- Barra de Reproducción -->
                   <audio controls class="w-full mt-2 rounded-lg border-2 border-gray-300">
                     <source [src]="getAudioUrl(anuncio.contenidoDelMensaje)" type="audio/mpeg" />
