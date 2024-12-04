@@ -43,6 +43,9 @@ import { FooterComponent } from './layouts/footer';
 import { SidebarComponent } from './layouts/sidebar';
 import { ThemeCustomizerComponent } from './layouts/theme-customizer';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { ToastrModule } from 'ngx-toastr';
+
+
 
 @NgModule({
     imports: [
@@ -53,6 +56,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
         NgSelectModule,
         HttpClientModule,
         FormsModule,
+        ToastrModule.forRoot(), // Configuración básica de toastr,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,

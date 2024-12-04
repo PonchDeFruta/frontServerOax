@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Routes, RouterModule } from '@angular/router';
 
+
 // Importación del SharedModule
 import { SharedModule } from 'src/shared.module';
 

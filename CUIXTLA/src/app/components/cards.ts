@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { NgxCustomModalComponent } from 'ngx-custom-modal';
+import { ToastrService } from 'ngx-toastr'; // Importamos el servicio de toastr
 
 @Component({
   selector: 'app-cards',
@@ -10,20 +11,22 @@ export class AnunciosComponent implements OnInit, AfterViewInit {
   anuncios: any[] = []; // Lista de anuncios obtenidos del servidor
   anunciosTodos: any[] = []; // Lista de anuncios obtenidos del servidor
   residentes: any[] = []; // Lista de residentes para el dropdown del modal
-  selectedAnuncio: any = {}; // Anuncio seleccionado para editar
+  selectedAnuncio: any = {}; // Anuncio seleccionado para editar o eliminar
   input: string = ''; // Propiedad para el binding del ngModel
   loading: boolean = false; // Indicador de carga de datos
   isAudio: boolean = false; // Para controlar si es audio o texto
   fileToUpload: File | null = null; // Archivo seleccionado para subir
+  selectedResidenteId: number | null = null;
 
   @ViewChild('deleteModal') deleteModal!: NgxCustomModalComponent;  // Uso de "!" para evitar el error
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private toastr: ToastrService) {}
 
   ngOnInit(): void {
     this.getAnunciosHoy();
     this.getAnunciosTodos(); // Si necesitas cargar los anuncios de todos los días
     this.getResidentes(); // Obtener lista de residentes
+    console.log('ngOnInit() ejecutado');
   }
 
   ngAfterViewInit(): void {
@@ -63,7 +66,7 @@ export class AnunciosComponent implements OnInit, AfterViewInit {
 
   // Obtener lista de residentes
   getResidentes(): void {
-    const url = 'http://localhost:8080/residentes';
+    const url = 'http://localhost:8080/residentes/obtenerTodosResidentes';
     this.http.get<any[]>(url).subscribe(
       (data) => {
         this.residentes = data.map((residente) => ({
@@ -115,18 +118,49 @@ export class AnunciosComponent implements OnInit, AfterViewInit {
     window.open(url, '_blank');
   }
 
-  // Abrir el modal de edición
-  openModal(modal: any): void {
-    if (modal && typeof modal.open === 'function') {
-      modal.open();
-    } else {
-      console.error('Modal no tiene un método open válido');
+  onResidenteSelected(): void {
+    if (this.selectedResidenteId) {
+      // Encontrar el residente seleccionado usando el ID
+      const selectedResidente = this.residentes.find(residente => residente.id === this.selectedResidenteId);
+  
+      if (selectedResidente) {
+        // Si se encuentra el residente, asignamos el nombre completo al campo 'residente' del anuncio
+        this.selectedAnuncio.residente = `${selectedResidente.nombre}`;
+        console.log('Residente seleccionado:', this.selectedAnuncio.residente);
+      }
     }
   }
+  
+
+// Al abrir el modal, aseguramos que el dropdown tenga el residente seleccionado (si existe)
+openModal(modal: NgxCustomModalComponent, anuncio: any): void {
+  if (modal && typeof modal.open === 'function') {
+    modal.open();  // Abre el modal
+
+    // Clonamos el anuncio para asegurarnos de que tiene el idMensaje y demás propiedades
+    this.selectedAnuncio = { ...anuncio };
+
+    // Asignamos el id del residente seleccionado
+    if (this.selectedAnuncio.residente) {
+      // Asignar el idResidente y su nombre completo
+      this.selectedResidenteId = this.selectedAnuncio.residente.id || null;
+    } else {
+      this.selectedResidenteId = null;
+    }
+
+    // Log para depurar si estamos recibiendo los datos correctamente
+    console.log('Anuncio seleccionado para editar:', this.selectedAnuncio);
+    console.log('ID Residente seleccionado:', this.selectedResidenteId);
+  } else {
+    console.error('Modal no tiene un método open válido');
+  }
+}
+
+
 
   // Abrir el modal de eliminación
   openDeleteModal(anuncio: any): void {
-    this.selectedAnuncio = anuncio; // Setear el anuncio a eliminar
+    this.selectedAnuncio = anuncio; // Asignar el anuncio a eliminar
     if (this.deleteModal) {
       this.deleteModal.open();
     } else {
@@ -135,37 +169,68 @@ export class AnunciosComponent implements OnInit, AfterViewInit {
   }
 
   // Eliminar un anuncio
-  deleteAnuncio(anuncio: any): void {
-    const url = `http://localhost:8080/anuncios/${anuncio.idMensaje}`;
-    this.http.delete(url).subscribe(
-      (response) => {
-        console.log('Anuncio eliminado:', response);
-        this.deleteModal.close();
-        this.getAnunciosHoy(); // Actualizar la lista de anuncios
-      },
-      (error) => {
-        console.error('Error al eliminar el anuncio:', error);
-      }
-    );
+// Método de eliminación sin parámetros
+deleteAnuncio(): void {
+  const id = this.selectedAnuncio.idMensaje;  // Usamos el idMensaje del anuncio seleccionado
+  const url = `http://localhost:8080/anuncios/${id}`;
+
+  this.http.delete(url).subscribe(
+    (response) => {
+      console.log('Anuncio eliminado:', response);
+      // Actualizamos la lista de anuncios después de eliminar
+      this.anuncios = this.anuncios.filter(a => a.idMensaje !== id);
+      this.deleteModal.close(); // Cerrar el modal después de eliminar
+      this.toastr.success(`Anuncio ID ${id} eliminado correctamente`, 'Operación exitosa');
+    },
+    (error) => {
+      console.error('Error al eliminar el anuncio:', error);
+      this.toastr.error('No se pudo eliminar el anuncio. Intente nuevamente.', 'Error');
+    }
+  );
+}
+// Método para actualizar el anuncio
+updateAnuncio(anuncioId: number, updatedData: any): void {
+  // Depuración para verificar que estamos pasando el idMensaje y los datos
+  console.log('ID del anuncio a actualizar:', anuncioId);
+  console.log('Datos enviados para actualización:', updatedData);
+
+  // Verifica que el idMensaje no es undefined
+  if (!anuncioId) {
+    console.error('El ID del anuncio es undefined. No se puede actualizar el anuncio.');
+    return;
   }
 
-  // Actualizar el anuncio
-  updateAnuncio(): void {
-    const updatedAnuncio = {
-      ...this.selectedAnuncio,
-      esAudio: this.isAudio,
-      contenidoDelMensaje: this.isAudio ? this.selectedAnuncio.contenidoDelMensaje : this.selectedAnuncio.contenidoDelMensaje,
-    };
+  const url = `http://localhost:8080/anuncios/${anuncioId}`;
 
-    const url = `http://localhost:8080/anuncios/${this.selectedAnuncio.idMensaje}`;
-    this.http.put(url, updatedAnuncio).subscribe(
-      (response) => {
-        console.log('Anuncio actualizado:', response);
-        this.getAnunciosHoy(); // Actualizar la lista de anuncios
-      },
-      (error) => {
-        console.error('Error al actualizar el anuncio:', error);
+  // Añadimos el idResidente a los datos a actualizar
+  updatedData.idResidente = this.selectedResidenteId;
+
+  this.http.put(url, updatedData).subscribe(
+    (response) => {
+      console.log('Anuncio actualizado con éxito', response);
+
+      // Después de la actualización, obtener nuevamente los anuncios para reflejar los cambios
+      this.getAnunciosHoy();  // O puedes usar getAnunciosTodos(), dependiendo de cuál lista quieras actualizar.
+
+      // Cerrar el modal de edición
+      if (this.deleteModal) {
+        this.deleteModal.close();  // O si usas otro modal para edición, usa la referencia correcta
       }
-    );
-  }
+
+      // Mostrar el mensaje de éxito con toastr
+      this.toastr.success('Anuncio actualizado correctamente', 'Operación exitosa');
+    },
+    (error) => {
+      console.error('Error al actualizar el anuncio', error);
+
+      // Mostrar mensaje de error con toastr
+      this.toastr.error('No se pudo actualizar el anuncio. Intente nuevamente.', 'Error');
+    }
+  );
+}
+
+
+
+
+
 }
