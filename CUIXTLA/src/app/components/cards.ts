@@ -39,12 +39,13 @@ export class AnunciosComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // Obtener anuncios genéricos desde la API
-  private getAnunciosData(url: string, targetArray: any[]): void {
-    this.loading = true;
+  private getAnunciosData(url: string, targetArray: any[], successMessage: string, errorMessage: string): void {
+    this.loading = true; // Activar indicador de carga
+  
     this.http.get<any[]>(url).subscribe(
       (data) => {
-        targetArray.length = 0;  // Limpiar el array antes de añadir los nuevos datos
+        targetArray.length = 0; // Limpiar el array antes de añadir los nuevos datos
+  
         data.forEach((anuncio) => {
           targetArray.push({
             idMensaje: anuncio.idMensaje,
@@ -58,14 +59,18 @@ export class AnunciosComponent implements OnInit, AfterViewInit {
               : 'No asociado a un residente',
           });
         });
-        this.loading = false;
+  
+        this.loading = false; // Desactivar indicador de carga
+        this.toastr.success(successMessage, 'Éxito'); // Mostrar mensaje de éxito
       },
       (error) => {
-        console.error('Error al obtener los anuncios:', error);
-        this.loading = false;
+        console.error(errorMessage, error); // Registrar error en la consola
+        this.loading = false; // Desactivar indicador de carga
+        this.toastr.error(errorMessage, 'Error'); // Mostrar mensaje de error
       }
     );
   }
+  
     // Cambiar entre "Hoy" y "Todos" los anuncios
   toggleAnunciosMode() {
     this.isAnunciosHoy = !this.isAnunciosHoy; // Alternar el modo
@@ -90,31 +95,50 @@ export class AnunciosComponent implements OnInit, AfterViewInit {
   }
 
   // Obtener anuncios de hoy
-  getAnunciosHoy(): void {
-    const url = 'http://localhost:8080/anuncios/hoy';
-    this.getAnunciosData(url, this.anuncios);
-  }
+// Obtener anuncios de hoy con mensajes
+getAnunciosHoy(): void {
+  const url = 'http://localhost:8080/anuncios/hoy';
+  const successMessage = 'Anuncios de hoy cargados correctamente.';
+  const errorMessage = 'Error al cargar los anuncios de hoy.';
+  this.getAnunciosData(url, this.anuncios, successMessage, errorMessage);
+}
 
-  // Obtener todos los anuncios
-  getAnunciosTodos(): void {
-    const url = 'http://localhost:8080/anuncios/todos';
-    this.getAnunciosData(url, this.anunciosTodos);
-  }
+// Obtener todos los anuncios con mensajes
+getAnunciosTodos(): void {
+  const url = 'http://localhost:8080/anuncios/todos';
+  const successMessage = 'Todos los anuncios cargados correctamente.';
+  const errorMessage = 'Error al cargar todos los anuncios.';
+  this.getAnunciosData(url, this.anunciosTodos, successMessage, errorMessage);
+}
+
 
   // Método que se activa cuando se cambia la opción de audio
+
   onAudioChange(): void {
     if (this.isAudio) {
-      this.selectedAnuncio.contenidoDelMensaje = ''; // Limpiar el campo de contenido si es audio
+      this.selectedAnuncio.esAudio = true; // Cambiar la bandera a true
+      this.selectedAnuncio.contenidoDelMensaje = ''; // Limpiar contenido para adjuntar archivo
+    } else {
+      this.selectedAnuncio.esAudio = false; // Cambiar la bandera a false
     }
   }
 
   // Método que maneja la selección de un archivo de audio
-  onFileSelected(event: any): void {
-    this.fileToUpload = event.target.files[0];
-    if (this.fileToUpload) {
-      this.selectedAnuncio.contenidoDelMensaje = this.fileToUpload.name;
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+  
+    if (input?.files?.length) {
+      const file = input.files[0];
+  
+      this.selectedAnuncio.contenidoDelMensaje = file.name;
+      this.selectedAnuncio.esAudio = true;
+  
+      this.toastr.success(`Archivo "${file.name}" seleccionado.`, 'Éxito');
+    } else {
+      this.toastr.warning('No se seleccionó ningún archivo.', 'Advertencia');
     }
   }
+  
 
   // Generar URL del audio
   getAudioUrl(content: string): string {
@@ -176,32 +200,38 @@ export class AnunciosComponent implements OnInit, AfterViewInit {
   }
 
   deleteAnuncio(): void {
+    if (!confirm(`¿Estás seguro de que deseas eliminar el anuncio "${this.selectedAnuncio.titulo}"?`)) {
+      return;
+    }
+  
     const id = this.selectedAnuncio.idMensaje;
     const url = `http://localhost:8080/anuncios/${id}`;
   
     this.http.delete(url).subscribe(
-      (response) => {
-        // Eliminar el anuncio de la lista local según el modo actual
-        if (this.isAnunciosHoy) {
-          this.anuncios = this.anuncios.filter(a => a.idMensaje !== id);
-        } else {
-          this.anunciosTodos = this.anunciosTodos.filter(a => a.idMensaje !== id);
-        }
-  
-        this.deleteModal.close(); // Cerrar el modal después de eliminar
-        this.toastr.success(`Anuncio ID ${id} eliminado correctamente`, 'Operación exitosa');
+      () => {
+        this.toastr.success(`Anuncio eliminado correctamente.`, 'Éxito');
+        this.anuncios = this.anuncios.filter(a => a.idMensaje !== id);
+        this.deleteModal.close();
       },
       (error) => {
         console.error('Error al eliminar el anuncio:', error);
-        this.toastr.error('No se pudo eliminar el anuncio. Intente nuevamente.', 'Error');
+        this.toastr.error('No se pudo eliminar el anuncio.', 'Error');
       }
     );
   }
+  
   
   updateAnuncio(anuncioId: number, updatedData: any): void {
     // Depuración para verificar que estamos pasando el idMensaje y los datos
     console.log('ID del anuncio a actualizar:', anuncioId);
     console.log('Datos enviados para actualización:', updatedData);
+
+    if (updatedData.esAudio && !updatedData.contenidoDelMensaje) {
+      this.toastr.error('Debe adjuntar un archivo de audio antes de guardar.', 'Error');
+      return;
+    }
+
+    console.log('Datos enviados:', updatedData);
   
     // Verifica que el idMensaje no es undefined
     if (!anuncioId) {
@@ -218,6 +248,7 @@ export class AnunciosComponent implements OnInit, AfterViewInit {
     this.http.put(url, updatedData).subscribe(
       (response: any) => {
         console.log('Anuncio actualizado con éxito', response);
+        this.toastr.success('Anuncio actualizado correctamente.', 'Éxito');
   
         // Obtener el anuncio actualizado
         const updatedAnuncio = response; // Suponemos que la respuesta contiene el anuncio actualizado
@@ -266,8 +297,18 @@ export class AnunciosComponent implements OnInit, AfterViewInit {
     );
   }
   
-  onAudioToggle(): void { if (!this.selectedAnuncio.esAudio) { this.selectedAnuncio.contenidoDelMensaje = ''; // Limpiar contenido si no es audio
-  } 
-}
+  onAudioToggle(): void {
+    if (this.selectedAnuncio.esAudio) {
+      this.selectedAnuncio.esAudio = false; // Cambiar a texto
+      this.selectedAnuncio.contenidoDelMensaje = ''; // Limpiar el contenido
+      this.fileToUpload = null; // Limpiar archivo seleccionado
+    } else {
+      this.selectedAnuncio.esAudio = true; // Cambiar a audio
+      this.selectedAnuncio.contenidoDelMensaje = ''; // Preparar para archivo
+    }
+  }
+  
+
+
 
 }

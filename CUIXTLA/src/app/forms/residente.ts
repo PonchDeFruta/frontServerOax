@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Residente } from '../models/residente.model';
 import { ResidenteService } from '../service/residente.service';
+import { ToastrService } from 'ngx-toastr'; // Importar ToastrService
 
 @Component({
   selector: 'app-residente',
@@ -20,10 +21,10 @@ export class ResidenteComponent {
 
   residentes: Residente[] = []; // Lista para mostrar los residentes existentes
 
-  message: string | null = null; // Mensaje de éxito o error
-  messageType: 'success' | 'error' | null = null; // Tipo de mensaje (para estilos)
-
-  constructor(private residentesService: ResidenteService) {}
+  constructor(
+    private residentesService: ResidenteService,
+    private toastr: ToastrService // Inyectar ToastrService
+  ) {}
 
   // Manejar el cambio del checkbox
   onCheckboxChange() {
@@ -44,6 +45,7 @@ export class ResidenteComponent {
       const x = event.offsetX;
       const y = event.offsetY;
       this.newResidente.domicilio.coordenadas = `${x}, ${y}`;
+      this.toastr.info(`Coordenadas seleccionadas: ${x}, ${y}`, 'Información');
     }
   }
 
@@ -60,7 +62,7 @@ export class ResidenteComponent {
   // Agregar un nuevo residente
   addResidente(): void {
     if (!this.validateFields()) {
-      this.showMessage('Todos los campos obligatorios deben estar llenos.', 'error');
+      this.toastr.warning('Todos los campos obligatorios deben estar llenos.', 'Advertencia');
       return;
     }
 
@@ -75,36 +77,23 @@ export class ResidenteComponent {
           domicilio: null,
         };
         this.showDomicilio = false; // Resetear el checkbox
-        this.showMessage('Residente creado con éxito.', 'success');
+        this.toastr.success('Residente creado con éxito.', 'Éxito');
       },
       (error) => {
         console.error('Error al crear residente', error);
-        this.showMessage('Error al crear residente. Intente nuevamente.', 'error');
+        this.toastr.error('Error al crear residente. Intente nuevamente.', 'Error');
       }
     );
   }
-  
-updateDomicilioField(field: keyof NonNullable<Residente['domicilio']>, value: string): void {
-  if (!this.newResidente.domicilio) {
-    this.newResidente.domicilio = {
-      direccion: '',
-      referencia: '',
-      coordenadas: '',
-    };
-  }
-  this.newResidente.domicilio[field] = value;
-}
 
-
-  // Mostrar mensaje
-  private showMessage(message: string, type: 'success' | 'error') {
-    this.message = message;
-    this.messageType = type;
-
-    // Ocultar el mensaje después de 5 segundos
-    setTimeout(() => {
-      this.message = null;
-      this.messageType = null;
-    }, 5000);
+  updateDomicilioField(field: keyof NonNullable<Residente['domicilio']>, value: string): void {
+    if (!this.newResidente.domicilio) {
+      this.newResidente.domicilio = {
+        direccion: '',
+        referencia: '',
+        coordenadas: '',
+      };
+    }
+    this.newResidente.domicilio[field] = value;
   }
 }

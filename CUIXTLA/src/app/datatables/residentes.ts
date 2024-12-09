@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ResidenteService } from '../service/residente.service';
-import { HttpClient } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr'; // Importar ToastrService
 
 @Component({
   selector: 'app-residentes',
@@ -22,13 +22,16 @@ export class ResidentesComponent implements OnInit {
     { field: 'comercio', title: 'Comercio' },
   ];
 
-  constructor(private residentesService: ResidenteService, private http: HttpClient) {}
+  constructor(
+    private residentesService: ResidenteService,
+    private toastr: ToastrService // Inyectar ToastrService
+  ) {}
 
   ngOnInit(): void {
     this.getResidentes();
   }
 
-  // Obtener la lista completa de residentes y procesarla
+  // Obtener la lista completa de residentes
   getResidentes(): void {
     this.residentesService.getResidentes().subscribe(
       (data) => {
@@ -40,14 +43,16 @@ export class ResidentesComponent implements OnInit {
           comercio: residente.comercio,
         }));
         this.filteredRows = [...this.residentes];
+        this.toastr.success('Residentes cargados correctamente.', 'Éxito');
       },
       (error) => {
         console.error('Error al obtener residentes:', error);
+        this.toastr.error('Error al cargar residentes. Intente nuevamente.', 'Error');
       }
     );
   }
 
-  // Filtrar la lista de residentes según el término de búsqueda
+  // Filtrar la lista de residentes
   applyFilter(): void {
     const searchTerm = this.search.toLowerCase();
     this.filteredRows = this.residentes.filter((residente) =>
@@ -58,51 +63,55 @@ export class ResidentesComponent implements OnInit {
     );
   }
 
-  // Lógica para activar el modo de edición
+  // Editar residente
   editarResidente(residente: any): void {
     this.isEditing = true;
     this.editResidente = { ...residente }; // Crear una copia para edición
   }
 
-  // Guardar los cambios del residente editado
+  // Guardar cambios del residente editado
   guardarEdicion(): void {
+    if (!this.editResidente.nombre.trim() || !this.editResidente.apellido.trim()) {
+      this.toastr.warning('Nombre y apellido son obligatorios.', 'Advertencia');
+      return;
+    }
+
     this.residentesService
       .actualizarResidente(this.editResidente.idResidente, this.editResidente)
       .subscribe(
-        (response: any) => {
-          alert(response.message || 'Residente actualizado con éxito');
+        () => {
+          this.toastr.success('Residente actualizado con éxito.', 'Éxito');
           this.isEditing = false;
           this.editResidente = null;
-          this.getResidentes(); // Refrescar la lista
+          this.getResidentes(); // Refrescar lista
         },
-        (error: any) => { // Define el tipo de error explícitamente
+        (error) => {
           console.error('Error al actualizar residente:', error);
-          alert('Error al actualizar el residente.');
+          this.toastr.error('Error al actualizar el residente.', 'Error');
         }
       );
   }
-  
-  
+
   // Cancelar la edición
   cancelarEdicion(): void {
     this.isEditing = false;
     this.editResidente = null;
+    this.toastr.info('Edición cancelada.', 'Información');
   }
 
-  // Lógica para eliminar un residente
+  // Eliminar un residente
   eliminarResidente(idResidente: number): void {
     if (confirm('¿Estás seguro de que deseas eliminar este residente?')) {
       this.residentesService.deleteResidente(idResidente).subscribe(
-        (response) => {
-          console.log('Residente eliminado:', response);
+        () => {
+          this.toastr.success('Residente eliminado correctamente.', 'Éxito');
           this.filteredRows = this.filteredRows.filter(
             (residente) => residente.idResidente !== idResidente
           );
-          alert('Residente eliminado con éxito.');
         },
         (error) => {
           console.error('Error al eliminar residente:', error);
-          alert('Ocurrió un error al eliminar el residente.');
+          this.toastr.error('Error al eliminar el residente.', 'Error');
         }
       );
     }

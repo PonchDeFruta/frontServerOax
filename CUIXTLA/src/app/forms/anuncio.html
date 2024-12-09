@@ -1,93 +1,66 @@
 <div class="form-container mx-auto p-6 max-w-lg bg-white rounded shadow-md">
-    <h2 class="text-xl font-bold mb-4 text-center">Crear un Nuevo Anuncio</h2>
-  
-    <!-- Mensaje de error o éxito -->
-    <div
-      *ngIf="message"
-      [ngClass]="{ 'bg-green-100 text-green-800': messageType === 'success', 'bg-red-100 text-red-800': messageType === 'error' }"
-      class="p-4 mb-4 text-center rounded"
-    >
-      {{ message }}
-    </div>
-  
-    <!-- Título -->
-    <div class="mb-4">
-      <label for="titulo" class="block text-sm font-medium text-gray-700">Título</label>
-      <input
-        id="titulo"
-        type="text"
-        [(ngModel)]="anuncio.titulo"
-        placeholder="Título del anuncio"
-        class="form-input mt-1 block w-full rounded border-gray-300 shadow-sm"
-      />
-    </div>
-  
-    <!-- Contenido del Mensaje -->
-    <div class="mb-4">
-      <label for="contenido" class="block text-sm font-medium text-gray-700">Contenido del Mensaje</label>
-      <input
-        id="contenido"
-        type="text"
-        [(ngModel)]="anuncio.contenidoDelMensaje"
-        [disabled]="anuncio.esAudio"
-        placeholder="Escriba aquí el contenido del mensaje"
-        class="form-input mt-1 block w-full rounded border-gray-300 shadow-sm"
-      />
-    </div>
-  
-    <!-- Cargar Archivo -->
-    <div *ngIf="anuncio.esAudio" class="mb-4">
-      <label for="archivo" class="block text-sm font-medium text-gray-700">Cargar Archivo de Audio</label>
-      <input
-        id="archivo"
-        type="file"
-        (change)="onFileSelected($event)"
-        accept=".mp3,.wav,.m4a"
-        class="form-input mt-1 block w-full rounded border-gray-300 shadow-sm"
-      />
-    </div>
-  
-    <!-- Fecha y Hora -->
-    <div class="mb-4">
-      <label for="fecha" class="block text-sm font-medium text-gray-700">Fecha y Hora</label>
-      <input
-        id="fecha"
-        type="text"
-        mwlFlatpickr
-        [(ngModel)]="anuncio.fechaMensaje"
-        [options]="dateTime"
-        class="form-input mt-1 block w-full rounded border-gray-300 shadow-sm"
-      />
-    </div>
-  
-    <!-- Residente Dropdown -->
-    <div class="mb-4">
-      <label for="residente" class="block text-sm font-medium text-gray-700">Residente</label>
-      <select
-        id="residente"
-        [(ngModel)]="anuncio.idResidente"
-        class="form-select mt-1 block w-full rounded border-gray-300 shadow-sm"
-      >
-        <option [value]="null">Selecciona un residente</option>
-        <option *ngFor="let residente of residentes" [value]="residente.idResidente">
-          {{ residente.nombre }} {{ residente.apellido }}
-        </option>
-      </select>
-    </div>
-  
-    <!-- Checkbox para Audio -->
-    <div class="mb-4">
-      <input id="esAudio" type="checkbox" [(ngModel)]="anuncio.esAudio" class="mr-2" />
-      <label for="esAudio" class="text-sm font-medium text-gray-700">¿Crear con audio?</label>
-    </div>
-  
-    <!-- Botón Crear -->
-    <button
-      class="btn btn-primary w-full mt-4 hover:bg-blue-600 text-white px-4 py-2 rounded"
-      [disabled]="!canSubmit()"
-      (click)="crearAnuncio()"
-    >
-      Crear Anuncio
-    </button>
+  <h2 class="text-xl font-bold mb-4 text-center">Crear un Nuevo Anuncio</h2>
+
+<!-- Mensaje de error o éxito -->
+<div *ngIf="message"
+  [ngClass]="{ 'bg-green-100 text-green-800': messageType === 'success', 'bg-red-100 text-red-800': messageType === 'error' }"
+  class="p-4 mb-4 text-center rounded">
+  {{ message }}
+</div>
+
+
+  <!-- Título -->
+  <div class="mb-4">
+    <label for="titulo" class="block text-sm font-medium text-gray-700">Título</label>
+    <input id="titulo" type="text" [(ngModel)]="anuncio.titulo" placeholder="Título del anuncio"
+      class="form-input mt-1 block w-full rounded border-gray-300 shadow-sm" />
   </div>
-  
+
+  <!-- Contenido del Mensaje -->
+  <div class="mb-4">
+    <label for="contenido" class="block text-sm font-medium text-gray-700">Contenido del Mensaje</label>
+    <input id="contenido" type="text" [(ngModel)]="anuncio.contenidoDelMensaje" [disabled]="anuncio.esAudio"
+      placeholder="Escriba aquí el contenido del mensaje"
+      class="form-input mt-1 block w-full rounded border-gray-300 shadow-sm" />
+  </div>
+
+
+
+  <!-- Fecha y Hora -->
+  <div class="mb-4">
+    <label for="fecha" class="block text-sm font-medium text-gray-700">Fecha y Hora</label>
+    <input id="fecha" type="text" mwlFlatpickr [(ngModel)]="anuncio.fechaMensaje" [options]="dateTime"
+      class="form-input mt-1 block w-full rounded border-gray-300 shadow-sm" />
+  </div>
+
+  <!-- Residente Dropdown -->
+  <div class="mb-4">
+    <label for="residente" class="block text-sm font-medium text-gray-700">Residente</label>
+    <select id="residente" [(ngModel)]="anuncio.idResidente"
+      class="form-select mt-1 block w-full rounded border-gray-300 shadow-sm">
+      <option [value]="null">Selecciona un residente</option>
+      <option *ngFor="let residente of residentes" [value]="residente.idResidente">
+        {{ residente.nombre }} {{ residente.apellido }}
+      </option>
+    </select>
+  </div>
+
+  <!-- Checkbox para Audio -->
+  <div class="mb-4">
+    <input id="esAudio" type="checkbox" [(ngModel)]="anuncio.esAudio" class="mr-2" />
+    <label for="esAudio" class="text-sm font-medium text-gray-700">¿Crear con audio?</label>
+  </div>
+
+  <!-- Cargar Archivo -->
+  <div *ngIf="anuncio.esAudio" class="mb-4">
+    <label for="archivo" class="block text-sm font-medium text-gray-700">Cargar Archivo de Audio</label>
+    <input id="archivo" type="file" (change)="onFileSelected($event)" accept=".mp3,.wav,.m4a"
+      class="form-input mt-1 block w-full rounded border-gray-300 shadow-sm" />
+  </div>
+
+  <!-- Botón Crear -->
+  <button class="btn btn-primary w-full mt-4 hover:bg-blue-600 text-white px-4 py-2 rounded" [disabled]="!canSubmit()"
+    (click)="crearAnuncio()">
+    Crear Anuncio
+  </button>
+</div>

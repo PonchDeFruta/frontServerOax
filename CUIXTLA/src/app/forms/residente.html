@@ -1,18 +1,6 @@
 <div class="form-container mx-auto p-6 max-w-lg bg-white rounded shadow-md">
   <h2 class="text-xl font-bold mb-4 text-center">Formulario de Residente</h2>
 
-  <!-- Mensaje de éxito o error -->
-  <div
-    *ngIf="message"
-    [ngClass]="{
-      'bg-green-100 text-green-800': messageType === 'success',
-      'bg-red-100 text-red-800': messageType === 'error'
-    }"
-    class="p-4 mb-4 text-center rounded"
-  >
-    {{ message }}
-  </div>
-
   <div class="mb-4">
     <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre</label>
     <input

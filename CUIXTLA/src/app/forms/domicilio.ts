@@ -1,6 +1,6 @@
-// Importa los tipos adecuados si es posible
 import { Component, OnInit } from '@angular/core';
 import { DomicilioService } from '../service/domicilio.service';
+import { ToastrService } from 'ngx-toastr'; // Importar ToastrService
 
 @Component({
   selector: 'app-domicilio',
@@ -18,7 +18,7 @@ export class DomicilioComponent implements OnInit {
     coordenadas: '',
   };
 
-  constructor(private domicilioService: DomicilioService) {}
+  constructor(private domicilioService: DomicilioService, private toastr: ToastrService) {} // Inyectar ToastrService
 
   ngOnInit() {
     this.cargarResidentes();
@@ -29,9 +29,11 @@ export class DomicilioComponent implements OnInit {
     this.domicilioService.getResidentes().subscribe(
       (data: any[]) => {
         this.residentes = data.filter((residente) => residente.domicilio === null);
+        this.toastr.info('Residentes cargados correctamente.', 'Información');
       },
       (error: any) => {
         console.error('Error al cargar residentes:', error);
+        this.toastr.error('Error al cargar residentes. Intente nuevamente.', 'Error');
       }
     );
   }
@@ -41,12 +43,13 @@ export class DomicilioComponent implements OnInit {
     this.coorX = event.offsetX;
     this.coorY = event.offsetY;
     this.domicilio.coordenadas = `${this.coorX},${this.coorY}`;
+    this.toastr.info(`Coordenadas seleccionadas: ${this.domicilio.coordenadas}`, 'Información');
   }
 
   // Crear domicilio y asociarlo
   guardarDomicilio() {
     if (!this.selectedResidenteId) {
-      alert('Selecciona un residente antes de guardar.');
+      this.toastr.warning('Selecciona un residente antes de guardar.', 'Advertencia');
       return;
     }
 
@@ -56,29 +59,31 @@ export class DomicilioComponent implements OnInit {
 
         this.domicilioService.asociarDomicilio(this.selectedResidenteId!, idDomicilio).subscribe(
           () => {
-            alert('Domicilio asociado con éxito.');
+            this.toastr.success('Domicilio asociado con éxito.', 'Éxito');
             this.resetFormulario();
           },
           (error: any) => {
             console.error('Error al asociar el domicilio:', error);
+            this.toastr.error('Error al asociar el domicilio. Intente nuevamente.', 'Error');
           }
         );
       },
       (error: any) => {
         console.error('Error al crear el domicilio:', error);
+        this.toastr.error('Error al crear el domicilio. Intente nuevamente.', 'Error');
       }
     );
   }
-  // Verifica si todos los campos requeridos están completos
-camposValidos(): boolean {
-  return (
-    !!this.selectedResidenteId && // Verifica que se seleccionó un residente
-    !!this.domicilio.direccion && // Verifica que la dirección no está vacía
-    !!this.domicilio.referencia && // Verifica que la referencia no está vacía
-    !!this.domicilio.coordenadas // Verifica que las coordenadas están seleccionadas
-  );
-}
 
+  // Verifica si todos los campos requeridos están completos
+  camposValidos(): boolean {
+    return (
+      !!this.selectedResidenteId && // Verifica que se seleccionó un residente
+      !!this.domicilio.direccion && // Verifica que la dirección no está vacía
+      !!this.domicilio.referencia && // Verifica que la referencia no está vacía
+      !!this.domicilio.coordenadas // Verifica que las coordenadas están seleccionadas
+    );
+  }
 
   // Reiniciar el formulario
   resetFormulario() {
@@ -87,5 +92,6 @@ camposValidos(): boolean {
     this.coorX = 0;
     this.coorY = 0;
     this.cargarResidentes(); // Recargar la lista
+    this.toastr.info('Formulario reiniciado.', 'Información');
   }
 }

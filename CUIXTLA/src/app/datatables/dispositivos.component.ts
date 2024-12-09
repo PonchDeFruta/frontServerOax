@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-dispositivos',
@@ -11,20 +12,19 @@ export class DispositivosComponent implements OnInit {
   filteredDispositivos: any[] = []; // Lista filtrada dinámicamente
   search: string = ''; // Término de búsqueda
 
-  // Columnas de la tabla
   cols = [
     { field: 'nombreDispositivo', title: 'Nombre del Dispositivo' },
     { field: 'contadorRecepcionMensajes', title: 'Contador de Mensajes' },
     { field: 'idMensaje', title: 'ID del Mensaje' },
   ];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private toastr: ToastrService) {}
 
   ngOnInit(): void {
-    this.getDispositivos(); // Obtener dispositivos
+    this.getDispositivos();  // Obtener dispositivos
   }
 
-  // Obtener dispositivos de la API
+  // Obtener dispositivos desde la API
   getDispositivos(): void {
     const url = 'http://localhost:8080/api/dispositivos/obtenerTodosLosDispositivos';
     this.http.get<any[]>(url).subscribe(
@@ -35,10 +35,12 @@ export class DispositivosComponent implements OnInit {
           contadorRecepcionMensajes: dispositivo.contadorRecepcionMensajes,
           idMensaje: dispositivo.idMensaje,
         }));
-        this.filteredDispositivos = [...this.dispositivos]; // Inicializar la lista filtrada
+        this.filteredDispositivos = [...this.dispositivos];  // Inicializar lista filtrada
+        this.toastr.success('Dispositivos cargados correctamente.', 'Éxito');
       },
       (error) => {
         console.error('Error al obtener dispositivos:', error);
+        this.toastr.error('Error al cargar los dispositivos.', 'Error');
       }
     );
   }
@@ -52,6 +54,10 @@ export class DispositivosComponent implements OnInit {
         .toLowerCase()
         .includes(searchTerm)
     );
+
+    if (this.filteredDispositivos.length === 0) {
+      this.toastr.warning('No se encontraron dispositivos con el término ingresado.', 'Advertencia');
+    }
   }
 
   // Eliminar un dispositivo de la lista
@@ -59,15 +65,15 @@ export class DispositivosComponent implements OnInit {
     if (confirm('¿Estás seguro de que deseas eliminar este dispositivo?')) {
       const url = `http://localhost:8080/api/dispositivos/${idDispositivo}`;
       this.http.delete(url).subscribe(
-        (response) => {
+        () => {
           this.filteredDispositivos = this.filteredDispositivos.filter(
             (dispositivo) => dispositivo.idDispositivo !== idDispositivo
           );
-          alert('Dispositivo eliminado con éxito.');
+          this.toastr.success('Dispositivo eliminado correctamente.', 'Éxito');
         },
         (error) => {
           console.error('Error al eliminar dispositivo:', error);
-          alert('Ocurrió un error al eliminar el dispositivo.');
+          this.toastr.error('Ocurrió un error al eliminar el dispositivo.', 'Error');
         }
       );
     }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { AnuncioService } from '../service/anuncio.service'; // Ruta ajustada según tu proyecto
+import { AnuncioService } from '../service/anuncio.service'; // Ruta ajustada según tu proyecto+
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-anuncio',
@@ -24,7 +25,7 @@ export class AnuncioComponent implements OnInit {
     defaultDate: new Date().toISOString().slice(0, 16),
   };
 
-  constructor(private anuncioService: AnuncioService) {}
+  constructor(private anuncioService: AnuncioService, private toastr: ToastrService) {}
 
   ngOnInit() {
     this.loadResidentes();
@@ -35,13 +36,15 @@ export class AnuncioComponent implements OnInit {
     this.anuncioService.getResidentes().subscribe(
       (data) => {
         this.residentes = data.filter((residente) => residente.nombre && residente.apellido);
+        this.toastr.success('Residentes cargados correctamente.', 'Éxito');
       },
       (error) => {
         console.error('Error al cargar residentes:', error);
-        this.showMessage('Error al cargar residentes.', 'error');
+        this.toastr.error('Error al cargar residentes.', 'Error');
       }
     );
   }
+  
 
   // Manejar selección de archivo
   onFileSelected(event: Event) {
@@ -49,9 +52,12 @@ export class AnuncioComponent implements OnInit {
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
       this.anuncio.contenidoDelMensaje = file.name; // Solo el nombre del archivo
-      this.showMessage(`Archivo "${file.name}" seleccionado.`, 'success');
+      this.toastr.success(`Archivo "${file.name}" seleccionado correctamente.`, 'Archivo seleccionado');
+    } else {
+      this.toastr.warning('No se seleccionó ningún archivo.', 'Advertencia');
     }
   }
+  
 
   // Validar si el formulario puede enviarse
   canSubmit() {
@@ -64,8 +70,22 @@ export class AnuncioComponent implements OnInit {
 
   // Crear un nuevo anuncio usando el servicio
   crearAnuncio() {
+    if (!this.anuncio.titulo) {
+      this.toastr.warning('El título es obligatorio.', 'Advertencia');
+      return;
+    }
+  
+    if (!this.anuncio.fechaMensaje) {
+      this.toastr.warning('Debe especificar una fecha y hora.', 'Advertencia');
+      return;
+    }
+  
+    if (this.anuncio.esAudio && !this.anuncio.contenidoDelMensaje) {
+      this.toastr.warning('Debe adjuntar un archivo de audio.', 'Advertencia');
+      return;
+    }
+  
     const fechaISO = new Date(this.anuncio.fechaMensaje).toISOString();
-
     const payload = {
       titulo: this.anuncio.titulo,
       contenidoDelMensaje: this.anuncio.contenidoDelMensaje,
@@ -73,21 +93,22 @@ export class AnuncioComponent implements OnInit {
       esAudio: this.anuncio.esAudio,
       idResidente: this.anuncio.idResidente,
     };
-
+  
     console.log('Payload enviado:', payload);
-
+  
     this.anuncioService.crearAnuncio(payload).subscribe(
       (response) => {
         console.log('Anuncio creado:', response);
-        this.showMessage('Anuncio creado con éxito.', 'success');
+        this.toastr.success('Anuncio creado con éxito.', 'Éxito');
         this.resetFormulario();
       },
       (error) => {
         console.error('Error al crear anuncio:', error);
-        this.showMessage('Ocurrió un error al crear el anuncio.', 'error');
+        this.toastr.error('Ocurrió un error al crear el anuncio.', 'Error');
       }
     );
   }
+  
 
   // Mostrar mensajes de éxito o error
   private showMessage(message: string, type: 'success' | 'error' | null) {
@@ -109,5 +130,7 @@ export class AnuncioComponent implements OnInit {
       esAudio: false,
       idResidente: null,
     };
+    this.toastr.info('Formulario reiniciado.', 'Información');
   }
+  
 }

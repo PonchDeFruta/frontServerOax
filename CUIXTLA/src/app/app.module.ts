@@ -56,7 +56,11 @@ import { ToastrModule } from 'ngx-toastr';
         NgSelectModule,
         HttpClientModule,
         FormsModule,
-        ToastrModule.forRoot(), // Configuración básica de toastr,
+        ToastrModule.forRoot({
+            timeOut: 3000,         // Duración del mensaje
+            positionClass: 'toast-top-right', // Posición
+            preventDuplicates: true, // Evita duplicados
+          }), // Configuración básica de toastr,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
