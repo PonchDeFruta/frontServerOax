@@ -6,26 +6,27 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ResidenteService {
-  private apiUrl = 'http://localhost:8080/residentes'; // Cambia esta URL según tu servidor
+
+  private urlServer = 'http://192.1.1.253:8080/residentes'; // Cambia esta URL según tu servidor
 
   constructor(private http: HttpClient) {}
 
   // Método para obtener la lista de residentes
   getResidentes(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/obtenerTodosResidentes`);
+    return this.http.get(`${this.urlServer}/obtenerTodosResidentes`);
   }
 
   // Método para crear un residente
   addResidente(residente: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/crearResidente`, residente);
+    return this.http.post(`${this.urlServer}/crearResidente`, residente);
   }
   
   deleteResidente(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${id}`);
+    return this.http.delete<any>(`${this.urlServer}/${id}`);
   }
 
   actualizarResidente(idResidente: number, residente: any): Observable<any> {
-    const url = `${this.apiUrl}/${idResidente}`;
+    const url = `${this.urlServer}/${idResidente}`;
     return this.http.put<any>(url, residente);
   }
   

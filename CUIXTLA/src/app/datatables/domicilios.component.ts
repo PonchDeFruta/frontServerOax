@@ -13,7 +13,7 @@ export class DomiciliosComponent implements OnInit {
   search: string = '';  // Término de búsqueda
   isEditing: boolean = false;  // Modo de edición
   editDomicilio: any = null;  // Domicilio que se está editando
-
+  urlServer = "http://192.1.1.253:8080";
   cols = [
     { field: 'direccion', title: 'Dirección' },
     { field: 'referencia', title: 'Referencia' },
@@ -29,7 +29,7 @@ export class DomiciliosComponent implements OnInit {
 
   // Obtener domicilios junto con la información del residente
   getDomicilios(): void {
-    const url = 'http://localhost:8080/residentes/obtenerResidenteDomicilio';
+    const url = `${this.urlServer}/residentes/obtenerResidenteDomicilio`;
     this.http.get<any[]>(url).subscribe(
       (data) => {
         this.domicilios = data.map((residente: any) => ({
@@ -92,7 +92,7 @@ export class DomiciliosComponent implements OnInit {
       return;
     }
 
-    const url = `http://localhost:8080/domicilios/${this.editDomicilio.idDomicilio}`;
+    const url = `${this.urlServer}/domicilios/${this.editDomicilio.idDomicilio}`;
     this.http.put(url, this.editDomicilio).subscribe(
       (response: any) => {
         this.toastr.success('Domicilio actualizado con éxito.', 'Éxito');
@@ -117,7 +117,7 @@ export class DomiciliosComponent implements OnInit {
   // Eliminar domicilio
   eliminarDomicilio(idDomicilio: number): void {
     if (confirm('¿Estás seguro de que deseas eliminar este domicilio?')) {
-      const url = `http://localhost:8080/domicilios/${idDomicilio}`;
+      const url = `${this.urlServer}/domicilios/${idDomicilio}`;
       this.http.delete(url).subscribe(
         () => {
           this.toastr.success('Domicilio eliminado correctamente.', 'Éxito');

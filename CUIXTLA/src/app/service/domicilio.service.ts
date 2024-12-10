@@ -6,24 +6,24 @@ import { Observable } from 'rxjs';
   providedIn: 'root', // Permite que Angular lo registre automáticamente
 })
 export class DomicilioService {
-  private baseUrl = 'http://localhost:8080';
+  private urlServer = 'http://192.1.1.253:8080';
 
   constructor(private http: HttpClient) {}
 
   // Obtener residentes con domicilio nulo
   getResidentes(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/residentes/obtenerTodosResidentes`);
+    return this.http.get(`${this.urlServer}/residentes/obtenerTodosResidentes`);
   }
 
   // Crear un domicilio
   crearDomicilio(domicilio: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/domicilios/crearDomicilio`, domicilio);
+    return this.http.post(`${this.urlServer}/domicilios/crearDomicilio`, domicilio);
   }
 
   // Asociar domicilio a residente
   asociarDomicilio(idResidente: number, idDomicilio: number): Observable<any> {
     return this.http.put(
-      `${this.baseUrl}/residentes/${idResidente}/domicilio/${idDomicilio}`,
+      `${this.urlServer}/residentes/${idResidente}/domicilio/${idDomicilio}`,
       {}
     );
   }

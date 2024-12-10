@@ -11,6 +11,7 @@ export class DispositivosComponent implements OnInit {
   dispositivos: any[] = []; // Lista completa de dispositivos
   filteredDispositivos: any[] = []; // Lista filtrada dinámicamente
   search: string = ''; // Término de búsqueda
+  urlServer = "http://192.1.1.253:8080";
 
   cols = [
     { field: 'nombreDispositivo', title: 'Nombre del Dispositivo' },
@@ -26,7 +27,7 @@ export class DispositivosComponent implements OnInit {
 
   // Obtener dispositivos desde la API
   getDispositivos(): void {
-    const url = 'http://localhost:8080/api/dispositivos/obtenerTodosLosDispositivos';
+    const url = `${this.urlServer}/api/dispositivos/obtenerTodosLosDispositivos`;
     this.http.get<any[]>(url).subscribe(
       (data) => {
         this.dispositivos = data.map((dispositivo: any) => ({
@@ -63,7 +64,7 @@ export class DispositivosComponent implements OnInit {
   // Eliminar un dispositivo de la lista
   eliminarDispositivo(idDispositivo: number): void {
     if (confirm('¿Estás seguro de que deseas eliminar este dispositivo?')) {
-      const url = `http://localhost:8080/api/dispositivos/${idDispositivo}`;
+      const url = `${this.urlServer}/api/dispositivos/${idDispositivo}`;
       this.http.delete(url).subscribe(
         () => {
           this.filteredDispositivos = this.filteredDispositivos.filter(

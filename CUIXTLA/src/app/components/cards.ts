@@ -19,6 +19,7 @@ export class AnunciosComponent implements OnInit, AfterViewInit {
   fileToUpload: File | null = null; // Archivo seleccionado para subir
   selectedResidenteId: number | null = null;
   isAnunciosHoy: boolean = true; // Modo por defecto: mostrar anuncios de hoy
+  urlServer = "http://192.1.1.253:8080";
 
 
   @ViewChild('deleteModal') deleteModal!: NgxCustomModalComponent;  // Uso de "!" para evitar el error
@@ -97,7 +98,7 @@ export class AnunciosComponent implements OnInit, AfterViewInit {
   // Obtener anuncios de hoy
 // Obtener anuncios de hoy con mensajes
 getAnunciosHoy(): void {
-  const url = 'http://localhost:8080/anuncios/hoy';
+  const url = `${this.urlServer}/anuncios/hoy`;
   const successMessage = 'Anuncios de hoy cargados correctamente.';
   const errorMessage = 'Error al cargar los anuncios de hoy.';
   this.getAnunciosData(url, this.anuncios, successMessage, errorMessage);
@@ -105,7 +106,7 @@ getAnunciosHoy(): void {
 
 // Obtener todos los anuncios con mensajes
 getAnunciosTodos(): void {
-  const url = 'http://localhost:8080/anuncios/todos';
+  const url = `${this.urlServer}/anuncios/todos`;
   const successMessage = 'Todos los anuncios cargados correctamente.';
   const errorMessage = 'Error al cargar todos los anuncios.';
   this.getAnunciosData(url, this.anunciosTodos, successMessage, errorMessage);
@@ -142,7 +143,7 @@ getAnunciosTodos(): void {
 
   // Generar URL del audio
   getAudioUrl(content: string): string {
-    return `http://localhost:8080/${content}`;
+    return `${this.urlServer}/${content}`;
   }
 
   // Descargar audio
@@ -205,17 +206,19 @@ getAnunciosTodos(): void {
     }
   
     const id = this.selectedAnuncio.idMensaje;
-    const url = `http://localhost:8080/anuncios/${id}`;
+    const url = `${this.urlServer}/anuncios/${id}`;
   
     this.http.delete(url).subscribe(
       () => {
         this.toastr.success(`Anuncio eliminado correctamente.`, 'Éxito');
         this.anuncios = this.anuncios.filter(a => a.idMensaje !== id);
         this.deleteModal.close();
+        window.location.reload();
       },
       (error) => {
         console.error('Error al eliminar el anuncio:', error);
         this.toastr.error('No se pudo eliminar el anuncio.', 'Error');
+        window.location.reload();
       }
     );
   }
@@ -239,7 +242,7 @@ getAnunciosTodos(): void {
       return;
     }
   
-    const url = `http://localhost:8080/anuncios/${anuncioId}`;
+    const url = `${this.urlServer}/anuncios/${anuncioId}`;
   
     // Añadimos el idResidente a los datos a actualizar
     updatedData.idResidente = this.selectedResidenteId;

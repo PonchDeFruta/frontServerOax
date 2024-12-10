@@ -11,6 +11,7 @@ export class MapComponent implements OnInit {
   residentes: any[] = [];
   mapWidth = 352;  // Ancho real de la imagen del mapa
   mapHeight = 443;  // Alto real de la imagen del mapa
+  urlServer = "http://192.1.1.253:8080";
 
   constructor(private http: HttpClient, private toastr: ToastrService) {}
 
@@ -20,7 +21,7 @@ export class MapComponent implements OnInit {
 
   // Cargar residentes con domicilios y coordenadas
   loadResidentes(): void {
-    const url = 'http://localhost:8080/residentes/obtenerResidenteDomicilio';
+    const url = `${this.urlServer}/residentes/obtenerResidenteDomicilio`;
     this.http.get<any[]>(url).subscribe(
       (data) => {
         this.residentes = data.filter(
